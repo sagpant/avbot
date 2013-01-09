@@ -1,0 +1,137 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Qqbot by avplayer</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/main.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <header>
+        <h1>Qqbot</h1>
+        <p>qq bot that bridges QQ groups and IRC channels and XMPP rooms</p>
+      </header>
+
+      <div id="banner">
+        <span id="logo"></span>
+
+        <a href="https://github.com/avplayer/qqbot" class="button fork"><strong>View On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="https://github.com/avplayer/qqbot/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/avplayer/qqbot/tarball/master" class="button">TAR</a></li>
+          </ul>
+        </div>
+      </div><!-- end banner -->
+
+    <div class="wrapper">
+      <nav>
+        <ul></ul>
+      </nav>
+      <section>
+        <h1>qqbot = 基于webqq协议的QQ群聊天记录机器人</h1>
+
+<p>qqbot 连通 IRC、XMPP 和  QQ群，并能实时记录聊天信息。每日自动生成新的日志文件。</p>
+
+<h2>功能介绍</h2>
+
+<h3>登录QQ，记录群消息</h3>
+
+<h3>登录IRC，记录IRC消息</h3>
+
+<h3>登录XMPP，记录XMPP聊天室消息</h3>
+
+<h3>将群消息转发到IRC和XMPP聊天室</h3>
+
+<h3>将IRC消息转发到QQ群和XMPP聊天室</h3>
+
+<h3>将XMPP聊天室消息转发到QQ群和IRC</h3>
+
+<h3>QQ图片转成 url 链接给 IRC和XMPP聊天室</h3>
+
+<h1>编译办法</h1>
+
+<p>项目使用 cmake 编译。编译办法很简单</p>
+
+<pre><code>mkdir build
+cd build
+cmake [qqbot的路径]
+make -j8
+</code></pre>
+
+<h1>编译依赖</h1>
+
+<p>依赖 boost。 boost 要 1.48 以上。</p>
+
+<p>gloox 已经通过 bundle 的形式包含了，不需要外部依赖了。</p>
+
+<h1>使用</h1>
+
+<p>读取配置文件 /etc/qqbotrc</p>
+
+<p>配置文件的选项就是去掉 -- 的命令行选项。比如命令行接受 --qqnum 
+配置文件就写</p>
+
+<pre><code>qqnum=qq号码
+</code></pre>
+
+<p>就可以了。
+命令行选项看看 --help 输出</p>
+
+<h2>IRC频道</h2>
+
+<p>频道名不带 # 比如</p>
+
+<pre><code>--ircrooms=ubuntu-cn,gentoo-cn,fedora-zh
+</code></pre>
+
+<p>逗号隔开</p>
+
+<h2>XMPP 聊天室</h2>
+
+<pre><code>--xmpprooms=linuxcn@im.linuxapp.org,avplayer@im.linuxapp.org
+</code></pre>
+
+<p>也是逗号隔开</p>
+
+<h2>频道组</h2>
+
+<p>使用 --map 功能将频道和QQ群绑定成一组。被绑定的组内消息互通。</p>
+
+<p>用法：  --map=qq:123456,irc:avplayer;qq:3344567,irc:otherircchannel,xmpp:linuxcn</p>
+
+<p>频道名不带 # , XMPP 聊天室不带 @ 后面的服务器地址。</p>
+
+<p>也可以在 /etc/qqbotrc 或者 ~/.qqbotrc 写，每行一个，不带 --。
+如 map=qq:123456,irc:avplayer;qq:3344567,irc:otherircchannel,xmpp:linuxcn</p>
+
+<p>频道组用 ; 隔开。组成份间用,隔离。</p>
+
+<h1>获得帮助</h1>
+
+<p>我们在 IRC（irc.freenode.net ） 的 #avplayer 频道。 QQ群 3597082</p>
+
+<h1>thanks</h1>
+
+<p>谢谢 神话群群主提供的代码和建议；Youku的谢总(女)贡献的IRC代码。
+还有 pidgin-lwqq 解析的 WebQQ 协议。</p>
+      </section>
+      <footer>
+        <p>Project maintained by <a href="https://github.com/avplayer">avplayer</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
