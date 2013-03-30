@@ -4,8 +4,7 @@ title: avbot by avplayer
 github: https://github.com/avplayer/avbot
 ---
 
-avbot = 多协议聊天记录机器人
-===
+-avbot = 多协议聊天记录机器人 [![Build Status](https://travis-ci.org/avplayer/avbot.png?branch=master)](https://travis-ci.org/avplayer/avbot)
 
 avbot 连通 IRC、XMPP 和  QQ群，并能实时记录聊天信息。每日自动生成新的日志文件。
 
@@ -18,6 +17,7 @@ avbot 连通 IRC、XMPP 和  QQ群，并能实时记录聊天信息。每日自�
 ### 将IRC消息转发到QQ群和XMPP聊天室
 ### 将XMPP聊天室消息转发到QQ群和IRC
 ### QQ图片转成 url 链接给 IRC和XMPP聊天室
+### 登录 EMAIL (使用 pop3 协议), 获取邮件, 并转发到聊天室
 
 # rpm 包
 
@@ -41,8 +41,9 @@ avbot 连通 IRC、XMPP 和  QQ群，并能实时记录聊天信息。每日自�
 
 	mkdir build
 	cd build
-	cmake [qqbot的路径]
+	cmake [avbot源码的路径]
 	make -j8
+
 # 编译依赖
 
 依赖 boost。 boost 要 1.48 以上。
@@ -69,7 +70,7 @@ gloox 已经通过 bundle 的形式包含了，不需要外部依赖了。
 
 	--ircrooms=ubuntu-cn,gentoo-cn,fedora-zh
 
-逗号隔开
+逗号隔开, avbot 会分别加入这些聊天室.
 
 ## XMPP 聊天室
 
@@ -81,15 +82,18 @@ gloox 已经通过 bundle 的形式包含了，不需要外部依赖了。
 
 使用 --map 功能将频道和QQ群绑定成一组。被绑定的组内消息互通。
 
-用法：  --map=qq:123456,irc:avplayer;qq:3344567,irc:otherircchannel,xmpp:linuxcn
+用法：  --map=qq:123456,irc:avplayer;qq:3344567,irc:otherircchannel,mail,xmpp:linuxcn
 
 频道名不带 \# , XMPP 聊天室不带 @ 后面的服务器地址。
 
 也可以在 /etc/qqbotrc 或者 ~/.qqbotrc 写，每行一个，不带 --。
-如 map=qq:123456,irc:avplayer;qq:3344567,irc:otherircchannel,xmpp:linuxcn
-
+如 map=qq:123456,irc:avplayer;qq:3344567,irc:otherircchannel,mail,xmpp:linuxcn;
 
 频道组用 ; 隔开。组成份间用,隔离。
+
+这个命令形式的意思四建立2个频道组. 第一个频道组包含 QQ群123456,irc频道\#avplayer 第二个频道组包含qq群3344567,irc频道\#otherircchannel, xmpp聊天室linuxcn@im.linuxapp.org. 以及接受邮件转发.
+在同一个频道组的群也好,irc频道也罢, XMPP聊天室也好, 相互之间转发消息. 不在一个频道组的则不转发. 像沙箱一样的隔离掉,互不干扰.
+
 
 # 获得帮助
 
