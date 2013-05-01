@@ -4,9 +4,13 @@ title: avbot by avplayer
 github: https://github.com/avplayer/avbot
 ---
 
--avbot = 多协议聊天记录机器人 [![Build Status](https://travis-ci.org/avplayer/avbot.png?branch=master)](https://travis-ci.org/avplayer/avbot)
+-avbot = Q群云秘书 [![Build Status](https://travis-ci.org/avplayer/avbot.png?branch=master)](https://travis-ci.org/avplayer/avbot)
 
-avbot 连通 IRC、XMPP 和  QQ群，并能实时记录聊天信息。每日自动生成新的日志文件。
+avbot 是一个多协议聊天秘书机器人.
+
+
+avbot 连通 IRC、XMPP 和  QQ群，并能实时记录聊天信息。每日自动生成新的日志文件。在聊天中可以使用 .qqbot 打头的命令控制机器人的行为.
+
 
 ## 功能介绍
 
@@ -19,6 +23,11 @@ avbot 连通 IRC、XMPP 和  QQ群，并能实时记录聊天信息。每日自�
 ### QQ图片转成 url 链接给 IRC和XMPP聊天室
 ### 登录 EMAIL (使用 pop3 协议), 获取邮件, 并转发到聊天室
 ### 将聊天内容转化为邮件发送到指定的邮箱(在聊天室使用 .qqbot mail to 命令)
+
+
+# WIKI 
+
+请到 [avbot wiki](https://github.com/avplayer/avbot/wiki/_pages) 查看各种文档
 
 # 预编译包
 
