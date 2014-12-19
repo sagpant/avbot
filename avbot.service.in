@@ -1,0 +1,16 @@
+[Unit]
+Description=avbot bridges QQ/IRC/XMPP world together
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=@CMAKE_INSTALL_PREFIX@/bin/avbot --nostdin
+RestartSec=1s
+Restart=on-failure
+Environment=LANG=en_US.UTF-8
+Environment=TZ=Asia/Shanghai
+WatchdogSec=12h
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target

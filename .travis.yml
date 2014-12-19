@@ -1,0 +1,49 @@
+language: cpp
+compiler:
+  - clang
+
+before_install:
+  - sudo add-apt-repository -y ppa:boost-latest/ppa
+  - sudo add-apt-repository -y ppa:smspillaz/cmake-3.0.2
+  - sudo add-apt-repository -y ppa:chris-lea/protobuf
+  - sudo add-apt-repository -y ppa:b-s-a/ppa
+  - sudo apt-get update
+  - sudo apt-get -y purge cmake
+  - sudo apt-get -y install -qq cmake
+  - sudo apt-get install -qq wget liblua5.1-dev libluajit-5.1-dev
+  - sudo apt-get install -qq libsqlite3-dev libsoci-sqlite3.2  libsoci3.2-dev
+  - sudo apt-get install -qq libprotobuf-dev protobuf-compiler
+  - sudo apt-get install -qq libgloox-dev  boost1.55
+  - wget http://jaist.dl.sourceforge.net/boost/boost_1_57_0.tar.bz2
+  - tar -xf boost_1_57_0.tar.bz2
+  - sudo rm -rf /usr/include/boost/phoenix/
+  - sudo rm -rf /usr/include/boost/spirit/
+  - sudo cp -a boost_1_57_0/boost/phoenix /usr/include/boost/
+  - sudo cp -a boost_1_57_0/boost/spirit /usr/include/boost/
+  - mkdir -pv build
+  - git submodule update --init
+  - sed 's/1\.57/1\.55/g' -i CMakeLists.txt
+
+before_script:
+  cd build && LDFLAGS="-lrt" cmake -DENABLE_LUA=on -DENABLE_PYTHON=on -DINTERNALGLOOX=OFF ..
+
+script:
+  make -j3
+
+notifications:
+  recipients:
+    - microcaicai@gmail.com
+    - jack.wgm@gmail.com
+  email:
+    on_success: change
+    on_failure: always
+
+
+addons:
+  coverity_scan:
+    project:
+      name: "avplayer/avbot"
+      description: "Build submitted via Travis CI"
+    notification_email: microcaicai@gmail.com
+    build_command:   "make -j2"
+    branch_pattern: coverity_scan

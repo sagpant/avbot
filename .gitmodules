@@ -1,0 +1,12 @@
+[submodule "protocols/libavim_group/avproto"]
+	path = protocols/libavim_group/avproto
+	url = https://github.com/avplayer/libavim.git
+[submodule "third_party/openssl"]
+	path = third_party/openssl
+	url = git://gitcafe.com/microcai/openssl-cmake.git
+[submodule "third_party/soci"]
+	path = third_party/soci
+	url = git://gitcafe.com/microcai/soci.git
+[submodule "avhttp"]
+	path = avhttp
+	url = git://github.com/avplayer/avhttp.git

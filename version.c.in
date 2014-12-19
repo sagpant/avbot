@@ -1,0 +1,10 @@
+
+extern const char * avbot_version()
+{
+	return "@CPACK_PACKAGE_VERSION_MAJOR@.@CPACK_PACKAGE_VERSION_MINOR@";
+}
+
+extern const char * avbot_version_build_time()
+{
+	return __DATE__ " " __TIME__;
+}

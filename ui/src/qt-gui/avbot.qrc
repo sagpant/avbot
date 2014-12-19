@@ -1,0 +1,5 @@
+<RCC>
+	<qresource prefix="/avbot">
+        <file>avbot.svg</file>
+    </qresource>
+</RCC>

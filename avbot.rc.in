@@ -1,0 +1,187 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "windows.h"
+
+#define IDC_STATIC                        -1
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// 中文(简体，中国) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_AVSETTINGS_DIALOG DIALOGEX 0, 0, 337, 199
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "avbot 参数设置"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "QQ设置",IDC_STATIC,7,7,323,40
+    LTEXT           "用户名",IDC_STATIC,17,24,25,8
+    EDITTEXT        IDC_EDIT_USER_NAME,47,22,104,14,ES_AUTOHSCROLL
+    LTEXT           "密码",IDC_STATIC,163,24,17,8
+    EDITTEXT        IDC_EDIT_PWD,186,22,93,14,ES_PASSWORD | ES_AUTOHSCROLL
+    GROUPBOX        "IRC频道设置",IDC_STATIC,7,51,323,48
+    CONTROL         "启用IRC",IDC_CHECK_IRC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,17,65,44,10
+    LTEXT           "频道",IDC_STATIC,16,82,17,8
+    EDITTEXT        IDC_EDIT_IRC_CHANNEL,39,80,42,14,ES_AUTOHSCROLL
+    LTEXT           "昵称",IDC_STATIC,88,82,17,8
+    EDITTEXT        IDC_EDIT_IRC_NICK,109,80,42,14,ES_AUTOHSCROLL
+    LTEXT           "密码",IDC_STATIC,163,82,17,8
+    EDITTEXT        IDC_EDIT_IRC_PWD,186,80,93,14,ES_PASSWORD | ES_AUTOHSCROLL
+    GROUPBOX        "XMPP频道设置",IDC_STATIC,7,106,323,58
+    CONTROL         "启用XMPP",IDC_CHECK_XMPP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,19,123,49,10
+    LTEXT           "频道",IDC_STATIC,17,143,17,8
+    EDITTEXT        IDC_EDIT_XMPP_CHANNEL,41,141,42,14,ES_AUTOHSCROLL
+    LTEXT           "昵称",IDC_STATIC,89,143,17,8
+    EDITTEXT        IDC_EDIT_XMPP_NICK,111,141,42,14,ES_AUTOHSCROLL
+    LTEXT           "密码",IDC_STATIC,165,143,17,8
+    EDITTEXT        IDC_EDIT_XMPP_PWD,187,141,93,14,ES_PASSWORD | ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "我设置好了",IDOK,70,171,78,14
+    PUSHBUTTON      "算了,我不想用了",IDCANCEL,163,171,85,14
+END
+
+
+IDD_INPUT_VERCODE DIALOGEX 0, 0, 161, 82
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "输入QQ验证码"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,7,61,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,104,61,50,14
+    CONTROL         "",IDC_VERCODE_DISPLAY,"Static",SS_BITMAP | SS_CENTERIMAGE | WS_BORDER,7,7,147,24,WS_EX_CLIENTEDGE
+    EDITTEXT        IDC_INPUT_VERYCODE,7,39,147,14,ES_LOWERCASE | ES_AUTOHSCROLL,WS_EX_STATICEDGE
+END
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_AVSETTINGS_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 330
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 192
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_AVBOT_ICON          ICON                    "avbot.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// RT_MANIFEST
+//
+
+1                       RT_MANIFEST             "avbot.manifest"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION @CPACK_PACKAGE_VERSION_MAJOR@,@CPACK_PACKAGE_VERSION_MINOR@,0,1
+ PRODUCTVERSION @CPACK_PACKAGE_VERSION_MAJOR@,@CPACK_PACKAGE_VERSION_MINOR@,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080404b0"
+        BEGIN
+            VALUE "CompanyName", "avplayer.org"
+            VALUE "FileDescription", "avbot 主程序"
+            VALUE "FileVersion", "@CPACK_PACKAGE_VERSION_MAJOR@.@CPACK_PACKAGE_VERSION_MINOR@.0.1"
+            VALUE "InternalName", "avbot.exe"
+            VALUE "LegalCopyright", "Copyright (C) 2012-2015 avplayer.org"
+            VALUE "OriginalFilename", "avbot.exe"
+            VALUE "ProductName", "Q群云秘书"
+            VALUE "ProductVersion", "@CPACK_PACKAGE_VERSION_MAJOR@.@CPACK_PACKAGE_VERSION_MINOR@.0.1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x804, 1200
+    END
+END
+
+#endif    // 中文(简体，中国) resources
+/////////////////////////////////////////////////////////////////////////////
+
+tweet	WAVE tweet.wav
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

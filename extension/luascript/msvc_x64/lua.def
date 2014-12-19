@@ -1,0 +1,2 @@
+; dlltool --export-all-symbols --output-def lua.def lua51.dll
+EXPORTS

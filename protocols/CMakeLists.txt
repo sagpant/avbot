@@ -1,0 +1,5 @@
+add_subdirectory(libwebqq)
+add_subdirectory(libirc)
+add_subdirectory(libxmpp)
+add_subdirectory(libmailexchange)
+add_subdirectory(libavim_group)

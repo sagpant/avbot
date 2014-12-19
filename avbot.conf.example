@@ -1,0 +1,35 @@
+# 配置文件示例, avbot 运行的时候读取配置文件 /etc/avbot.conf 或  ~/.avbot.conf
+
+
+global : {
+	# 配置阿三验证码服务
+	antigate_host : "xxxxxxx"
+	antigate_key : "xxxxxxxxxxxx"
+
+	# 配置 log 地址
+	logdir : "/home/cai/.qqbot/"
+}
+
+# 这样配置一个 QQ 帐号, 重复使用可以使用多个帐号
+
+qq : {
+  qqnumber : "1239795499"
+  password : ""
+}
+
+# 这里配置 irc, 重复使用可以配置多个 irc 帐号
+irc : {
+  nick : "avbot132"
+  rooms : {
+	# 看到没, 之前的 avbot 无法加入 ## 打头的频道, 这个问题解决了!
+  	"#avplayer" "#gentoo-zh"
+  }
+}
+
+# 这里配置 avim 群机器人, 重复使用可以配置多个 avim 帐号
+avim : {
+  keyfile : "/home/cai/avbot_avim.key"
+  certfile : "/home/cai/avbot_avim.crt"
+  # 这个文件用来配置群成员.
+  groupdef : "/home/cai/.qqbot/avimgroups.txt"
+}

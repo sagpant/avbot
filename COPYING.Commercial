@@ -1,0 +1,143 @@
+
+			  avbot commercial license v1
+
+avbot is a product of avplayer.org, and is dual licensed under AGPL and avbot commercial license.
+
+This avbot commercial license is a legal contract between avplayer.org development team and you(either
+an individual or a legal entity) for the licensed Software (as defined below).
+
+
+1. DEFINITIONS
+
+"avplayer.org" is an non-profit organization mainly focus on bring up great c++ based software and
+libraries. By non-profit means this organization does not profit on its products but relay on donations
+form individuals and legal entity. However avplayer.org does charge on license fees mainly because
+we need to found our development costs with in-comes from license fees together with donations. 
+
+"Development team" shall mean individuals that 1) have commit rights to avplayer.org software repositories
+and 2) commit non-trival changes to the Licensed Software.
+
+"Non-trival chanegs" means the patches or changes of which got committed that brings features or software
+frameworks that act as a fundamental parts or the software.
+
+"Licensed Software" shall mean the computer software, "online" or electronic documentation, associated
+media and printed materials, including the source code, example programs and the documentation
+delivered avplayer.org to Licensee in conjunction with this commercial license. Licensed Software does not
+include Third Party Software. 
+
+"Modified Software" shall mean modifications made to the Licensed Software by Licensee. 
+
+"Derivative Software" shall mean software won't work without the Licensed Software.
+
+2. OWNERSHIP
+
+The Licensed Software is protected by copyright laws and international copyright treaties, as well as other
+intellectual property laws and treaties. The Licensed Software is licensed, not sold. 
+
+The Licensed Software is owned by development team, not by avplayer.org. However, the development team have
+agreed to authorize avplayer.org as one and only one legal entity to license their committed code.
+
+Individuals can submit trival patches, and these changes are not own by development team. These changes are
+considered in public domain and are not protected by any copyright laws or any international copyright treaties.
+
+If a individual submit non-trival changes but does not agreed to authorize avplayer.org as one and only one
+legal entity to license his or her committed code, his or her patches will not be part of the Licensed Software.
+Licensee should change the compile time switch that omit the compilation of certain parts. If such omission
+is technically impossible, then the development team will not take these changes to guarantee the ability of
+dual licensing. 
+
+
+3. VALIDITY OF THE LICENSE
+
+By installing, copying, or otherwise using the Licensed Software, Licensee agrees to be bound by the terms
+of this license. If Licensee does not agree to the terms of this license, Licensee may not install, copy,
+or otherwise use the Licensed Software. In addition, by installing, copying, or otherwise using any Updates
+or other components of the Licensed Software that Licensee receives separately as part of the Licensed Software,
+Licensee agrees to be bound by any additional license terms that accompany such Updates, if any. If Licensee
+does not agree to the additional license terms that accompany such Updates, Licensee may not install, copy,
+or otherwise use such Updates.
+
+Upon Licensee's acceptance of the terms and conditions of this Agreement, Digia grants Licensee the right
+to use the Licensed Software in the manner provided below. 
+
+4. LICENSES
+4.1 Using, modifying and copying 
+
+avplayer.org (authorized by development team, will not repeat again) grants to Licensee a non-exclusive,
+non-transferable, perpetual license to use, modify and copy the Licensed Software for the Designated User(s)
+specified in the License Certificate for the sole purposes of designing, developing, and testing Application(s). 
+
+Licensee may install copies of the Licensed Software on an unlimited number of computers provided that only
+the Designated Users use the Licensed Software. Licensee may at any time designate another Designated User
+to replace a then-current Designated User by notifying avplayer.org, provided that a) the then-current
+Designated User has not been designated as a replacement during the last six (6) months; and b) there is no
+more than the specified number of Designated Users at any given time. 
+
+4.2 Redistribution
+
+a) avplayer.org grants Licensee a non-exclusive, royalty-free right to reproduce and distribute the object code
+form of Redistributables for execution on the specified Platforms. Copies of Redistributables may only be
+distributed with and for the sole purpose of executing Applications permitted under this license that Licensee
+has created using the Licensed Software. Under no circumstances may any copies of Redistributables be distributed
+separately. This license does not give Licensee any rights to distribute any of the parts of the Licensed Software
+neither as a whole nor as parts or snippets of code.
+
+b) Licensee may not distribute, transfer, assign or otherwise dispose of Applications and/or Redistributables,
+in binary/compiled form, or in any other form, if such action is part of a joint software and hardware
+distribution, except as provided by a separate runtime distribution license with avplayer.org. A joint hardware
+and software distribution shall be defined as either:
+
+  (i) distribution of a hardware device where, in its final end user configuration, the main user interface of
+  the device is provided by Application(s) created by Licensee or others, using a commercial version of
+  Derivative Software or Modified Software and depends on the Licensed Software. or
+  (ii) distribution of the Licensed Software with a device designed to facilitate the installation of the
+  Licensed Software onto the same device where the main user interface of such device is provided by
+  Application(s) created by Licensee or others, using a commercial version ofDerivative Software or Modified
+  Software,and depends on the Licensed Software. 
+
+4.3 Further Requirements
+
+The licenses granted in this Section 5 by Digia to Licensee are subject to Licensee's compliance with Section
+7 of this license.
+
+
+5. VERIFICATION
+
+avplayer.org or a certified auditor or the developing team, may, upon its reasonable request and at its expense,
+audit Licensee with respect to the use of the Licensed Software. Such audit may be conducted by mail, electronic
+means or through an in-person visit to Licensee's place of business. Any such in-person audit shall be conducted
+during regular business hours at Licensee's facilities and shall not unreasonably interfere with Licensee's
+business activities. avplayer.org shall not remove, copy, or redistribute any electronic material during the course
+of an audit. If an audit reveals that Licensee is using the Licensed Software in a way that is in material
+violation of the terms of this license, then Licensee shall pay avplayer.org reasonable costs of conducting the
+audit. In the case of a material violation, Licensee agrees to pay avplayer.org any amounts owing that are
+attributable to the unauthorized use. In the alternative, avplayer.org reserves the right, at avplayer.org's sole
+option, to terminate the licenses for the Licensed Software. 
+
+
+6. THIRD PARTY SOFTWARE
+
+The Licensed Software may provide links to third party libraries or code (collectively "Third Party Software")
+to implement various functions. Third Party Software does not comprise part of the Licensed Software.
+In some cases, access to Third Party Software may be included along with the Licensed Software delivery as a
+convenience for development and testing only. Such source code and libraries may be listed in the "third_party"
+source tree delivered with the Licensed Software or documented in the Licensed Software where the Third Party
+Software is used, as may be amended from time to time, do not comprise the Licensed Software. Licensee
+acknowledges (1) that some part of Third Party Software may require additional licensing of copyright and patents
+from the owners of such, and (2) that distribution of any of the Licensed Software referencing any portion of a
+Third Party Software may require appropriate licensing from such third parties.
+
+
+7. CONDITIONS FOR CREATING APPLICATIONS AND DISTRIBUTING REDISTRIBUTABLES 
+
+
+
+8. LIMITED WARRANTY AND WARRANTY DISCLAIMER
+
+avplayer.org hereby represents and warrants with respect to the Licensed Software that it has the power and authority
+to grant the rights and licenses granted to Licensee under this license. Except as set forth above, the Licensed
+Software is licensed to Licensee "as is". To the maximum extent permitted by applicable law, avplayer.org on behalf
+of itself and its suppliers, disclaims all warranties and conditions, either express or implied, including, but not
+limited to, implied warranties of merchantability, fitness for a particular purpose, title and non-infringement with
+regard to the Licensed Software. 
+
