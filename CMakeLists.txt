@@ -135,7 +135,7 @@ if(SQLITE3_FOUND)
 	message (STATUS "found sqlite3")
 else()
 	message (STATUS "sqlite3 not found, try to use internal one")
-
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNOMINMAX")
 	add_subdirectory(third_party/sqlite)
 
 	set(sqlite_lib_location  $<TARGET_LINKER_FILE:sqlite3>)
@@ -153,6 +153,7 @@ else()
 endif()
 
 IF(USE_INTERNAL_SOCI)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNOMINMAX")
 	add_subdirectory(third_party/soci/src EXCLUDE_FROM_ALL)
 	include_directories(${CMAKE_CURRENT_BINARY_DIR})
 	include_directories(third_party/soci/src/core)
