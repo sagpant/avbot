@@ -4,6 +4,8 @@ set(CMAKE_AUTOMOC ON)
 cmake_policy(SET CMP0020 NEW)
 add_definitions(-DQT_NO_KEYWORDS)
 
+find_package(Qt5Widgets REQUIRED)
+
 
 if(WIN32 AND MSVC AND ENABLE_QT_STATIC)
 	# For static Windows builds, we also need to pull in the Qt5 Platform
@@ -42,7 +44,6 @@ if(WIN32 AND MSVC AND ENABLE_QT_STATIC)
 	if (Qt5HB_LIBRARIES_RELEASE)
 		SET(Qt5HB_LIBRARIES optimized ${Qt5HB_LIBRARIES_RELEASE} debug ${Qt5HB_LIBRARIES_DEBUG})
 	endif()
-	link_libraries(${Qt5Platform_LIBRARIES} ${Qt5QWindows_LIBRARIES} ${Qt5QICO_LIBRARIES} ${Qt5HB_LIBRARIES})
 	ADD_DEFINITIONS(-DSTATIC_QT5)
 endif()
 
@@ -61,3 +62,4 @@ add_library(avbotgui STATIC ${SRCS})
 
 target_link_libraries(avbotgui Qt5::Widgets)
 target_link_libraries(avbotgui avbotui_base)
+target_link_libraries(avbotgui ${Qt5Platform_LIBRARIES} ${Qt5QWindows_LIBRARIES} ${Qt5QICO_LIBRARIES} ${Qt5HB_LIBRARIES})

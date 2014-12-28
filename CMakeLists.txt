@@ -99,6 +99,7 @@ if(ENABLE_LIBGCC_STATIC OR WIN32)
 	endif()
 endif()
 
+find_package(Qt5Widgets)
 find_package(Boost 1.57 REQUIRED COMPONENTS timer chrono date_time filesystem system program_options regex locale)
 find_package(systemd)
 find_package(Threads REQUIRED)
