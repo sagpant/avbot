@@ -1,4 +1,3 @@
-option(WITH_QT_GUI "a qt gui interface" OFF)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 find_package(Qt5Widgets)

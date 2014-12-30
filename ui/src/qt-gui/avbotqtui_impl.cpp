@@ -1,5 +1,8 @@
 ﻿
 #include <QString>
+#include <QTextBrowser>
+#include <QVBoxLayout>
+#include <QScreen>
 
 #include "qtgui.hpp"
 #include "avbotqtui_impl.hpp"
@@ -40,6 +43,7 @@ avbotqtui_impl::avbotqtui_impl(boost::asio::io_service& io_service, boost::logge
 	app->setQuitOnLastWindowClosed(false);
 
     qRegisterMetaType<std::function<void()>>("std::function<void()>");
+    qRegisterMetaType<std::string>("std::string");
     QObject::connect(this, &avbotqtui_impl::post_event, this, &avbotqtui_impl::execute_post, Qt::QueuedConnection);
 
 	app->setWindowIcon(load_icon());
@@ -50,8 +54,26 @@ avbotqtui_impl::avbotqtui_impl(boost::asio::io_service& io_service, boost::logge
 		avloop_run_gui(m_io_service);
 	});
 
+	auto mainwindow = new QMainWindow;
+
+	mainwindow->setAttribute(Qt::WA_DeleteOnClose);
+
+	auto log_browser = new QTextBrowser;
+
+	mainwindow->setCentralWidget(log_browser);
+
+	mainwindow->resize(app->primaryScreen()->availableSize() / 3);
+
+	mainwindow->show();
+
 	// 把日志输出给转到 qt 界面来
 	logger.write_log.connect(std::bind(&avbotqtui_impl::write_log, this, std::placeholders::_1, std::placeholders::_2));
+
+
+	connect(this, &avbotqtui_impl::append_log, mainwindow, [log_browser](std::string l, std::string m)
+	{
+		log_browser->append(QString::fromStdString(m));
+	}, Qt::QueuedConnection);
 }
 
 void avbotqtui_impl::show_vc_and_get_input_with_timeout(std::string imgdata, int timeout_sec, avbotui::vc_result_call_back cb)
@@ -83,6 +105,7 @@ void avbotqtui_impl::run()
 
 void avbotqtui_impl::write_log(std::string l, std::string m)
 {
+	append_log(l,m);
 	// 将 log 通知到 GUI 上.
 
 	if(m_tray)

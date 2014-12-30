@@ -44,6 +44,8 @@ option(ENABLE_LIBSTDCXX_STATIC "link to static libstdc++" OFF)
 option(ENABLE_LIBGCC_STATIC "link to static libgcc" OFF)
 option(WITH_ICONV "boost is build with iconv" ON)
 option(WITH_ICU "boost is build with icu " OFF)
+option(WITH_QT_GUI "a qt gui interface" OFF)
+
 option(USE_INTERNAL_SOCI "use bundled soci lib" WIN32)
 option(INTERNAL_OPENSSL "use bundled openssl" WIN32)
 
@@ -241,6 +243,10 @@ if(MSVC)
 endif()
 
 add_executable(avbot ${AVBOT_SOURCES} ${AVBOTRPC_SOURCES})
+
+if (Qt5Widgets_FOUND AND WITH_QT_GUI)
+	set_target_properties(avbot PROPERTIES WIN32_EXECUTABLE TRUE)
+endif()
 
 if(NOT WIN32)
 	target_link_libraries(avbot -rdynamic)

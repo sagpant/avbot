@@ -59,6 +59,8 @@ public:
 Q_SIGNALS:
 	void post_event(std::function<void()> func);
 
+	void append_log(std::string, std::string);
+
 private Q_SLOTS:
 	void execute_post(std::function<void()> func)
 	{
