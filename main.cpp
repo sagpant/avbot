@@ -85,7 +85,6 @@ namespace po = boost::program_options;
 extern "C" void avbot_setup_seghandler();
 extern "C" const char * avbot_version();
 extern "C" const char * avbot_version_build_time();
-extern "C" int playsound();
 
 extern pt::ptree parse_cfg(std::string filecontent);
 
@@ -700,8 +699,6 @@ int main(int argc, char * argv[])
 		"https://avlog.avplayer.org/cache/tj.php",
 		boost::bind(&avhttp::http_stream::close, &s)
 	);
-
-	avloop_idle_post(io_service, playsound);
 
 	boost::asio::signal_set terminator_signal(io_service);
 	terminator_signal.add(SIGINT);

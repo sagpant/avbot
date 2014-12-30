@@ -211,27 +211,6 @@ if(WIN32)
 	list(APPEND AVBOT_SOURCES minidump.cpp)
 endif()
 
-if(WIN32)
-	list(APPEND AVBOT_SOURCES sound.cpp )
-else()
-
-	find_package(ALSA)
-
-	if (ALSA_FOUND)
-		add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tweet.o
-			COMMAND ${CMAKE_LINKER} -r -b binary -o ${CMAKE_CURRENT_BINARY_DIR}/tweet.o tweet.wav
-			DEPENDS tweet.wav WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-			)
-
-		include_directories(${ALSA_INCLUDE_DIR})
-		list(APPEND AVBOT_SOURCES sound_alsa.cpp)
-		list(APPEND AVBOT_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/tweet.o )
-	else()
-		list(APPEND AVBOT_SOURCES sound_dumy.cpp)
-	endif()
-
-endif()
-
 if(MSVC)
 
 	if(CMAKE_CL_64)
