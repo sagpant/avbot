@@ -18,9 +18,9 @@
  *
  */
 
-#include <boost/json_parser_write.hpp>
+#include <memory>
+#include <functional>
 
-#include <boost/function.hpp>
 #include <boost/asio.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/signals2.hpp>
@@ -89,7 +89,7 @@ private:
 
 	// signal 的回调到这里
 	void callback_message(channel_identifier, avbotmsg);
-	void done_search(boost::system::error_code ec, boost::property_tree::ptree);
+	void done_search(boost::system::error_code ec, boost::property_tree::wptree);
 private:
 	boost::shared_ptr<socket_type> m_socket;
 
@@ -108,7 +108,7 @@ private:
 		std::string c,
 		std::string q,
 		std::string date,
-		std::function<void (boost::system::error_code, pt::ptree)> cb
+		std::function<void (boost::system::error_code, pt::wptree)> cb
 	)> do_search;
 
 	int process_post( std::size_t bytestransfered );
@@ -176,11 +176,15 @@ void avbot_rpc_server::on_pop(std::shared_ptr<boost::asio::streambuf> v)
 	);
 }
 
-void avbot_rpc_server::done_search(boost::system::error_code ec, boost::property_tree::ptree jsonout)
+void avbot_rpc_server::done_search(boost::system::error_code ec, boost::property_tree::wptree jsonout)
 {
 	std::shared_ptr<boost::asio::streambuf> v = std::make_shared<boost::asio::streambuf>();
+
 	std::ostream outstream(v.get());
-	boost::property_tree::json_parser::write_json(outstream, jsonout);
+
+	std::wstringstream jsondata;
+	boost::property_tree::json_parser::write_json(jsondata, jsonout);
+	outstream << boost::locale::conv::utf_to_utf<char>(jsondata.str());
 
 	avhttpd::response_opts opts;
 	opts.insert(avhttpd::http_options::content_type, "application/json; charset=utf8");
@@ -255,7 +259,7 @@ void avbot_rpc_server::client_loop(boost::system::error_code ec, std::size_t byt
 			)
 			{
 				// 取出这几个参数, 到数据库里查找, 返回结果吧.
-				BOOST_ASIO_CORO_YIELD do_search(what[1],what[2],what[3],
+				BOOST_ASIO_CORO_YIELD do_search(what[1], what[2], what[3],
 					std::bind(&avbot_rpc_server::done_search, shared_from_this(), std::placeholders::_1, std::placeholders::_2)
 				);
 				return;
@@ -344,7 +348,7 @@ void avbot_rpc_server::callback_message(channel_identifier, avbotmsg)
 }
 
 void avlog_do_search(boost::asio::io_service & io_service, boost::logger& logger, std::string c, std::string q, std::string date,
-	std::function<void (boost::system::error_code, pt::ptree)> handler, soci::session & db);
+	std::function<void (boost::system::error_code, pt::wptree)> handler, soci::session & db);
 
 static void accepte_handler(
 	boost::shared_ptr<boost::asio::ip::tcp::socket> m_socket,

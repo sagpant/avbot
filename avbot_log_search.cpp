@@ -19,10 +19,10 @@ namespace pt = boost::property_tree;
 
 void avlog_do_search(boost::asio::io_service & io_service, boost::logger& logger,
 	std::string c, std::string q, std::string date,
-	std::function<void (boost::system::error_code, pt::ptree)> handler,
+	std::function<void (boost::system::error_code, pt::wptree)> handler,
 	soci::session & db)
 {
-	pt::ptree outjson;
+	pt::wptree outjson;
 	std::string q_escaped;
 	// 根据 channel_name , query string , date 像数据库查找
 	logger.dbg() << " c = " << c << " q =  " << q << " date= " << date ;
@@ -48,25 +48,25 @@ void avlog_do_search(boost::asio::io_service & io_service, boost::logger& logger
 		, soci::into(r_rowid)
 		, soci::use(c);
 
-	pt::ptree results;
+	pt::wptree results;
 	// print out the result
 	for (int i = 0; i < r_date.size() ; i ++)
 	{
-		pt::ptree onemsg;
-		onemsg.put("date", r_date[i]);
-		onemsg.put("channel", r_channel[i]);
-		onemsg.put("nick", r_nick[i]);
-		onemsg.put("channel", r_channel[i]);
-		onemsg.put("message", r_message[i]);
-		onemsg.put("id", r_rowid[i]);
+		pt::wptree onemsg;
+		onemsg.put(L"date", boost::locale::conv::utf_to_utf<wchar_t>(r_date[i]));
+		onemsg.put(L"channel", boost::locale::conv::utf_to_utf<wchar_t>(r_channel[i]));
+		onemsg.put(L"nick", boost::locale::conv::utf_to_utf<wchar_t>(r_nick[i]));
+		onemsg.put(L"channel", boost::locale::conv::utf_to_utf<wchar_t>(r_channel[i]));
+		onemsg.put(L"message", boost::locale::conv::utf_to_utf<wchar_t>(r_message[i]));
+		onemsg.put(L"id", boost::locale::conv::utf_to_utf<wchar_t>(r_rowid[i]));
 
-		results.push_back(std::make_pair("", onemsg));
+		results.push_back(std::make_pair(L"", onemsg));
 	}
 
-	outjson.put("params.num_results", r_date.size());
-	outjson.put_child("data", results);
+	outjson.put(L"params.num_results", r_date.size());
+	outjson.put_child(L"data", results);
 
-	outjson.put("params.time_used", boost::timer::format(cputimer.elapsed(), 6, "%w"));
+	outjson.put(L"params.time_used", boost::locale::conv::utf_to_utf<wchar_t>(boost::timer::format(cputimer.elapsed(), 6, "%w")));
 
 	io_service.post(
 		boost::asio::detail::bind_handler(handler,
