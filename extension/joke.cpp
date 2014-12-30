@@ -21,7 +21,6 @@
  * libjoke 使用 avhttp 从笑话网站获取笑话，然后贴到群里.
  */
 
-#include <boost/json_create_escapes_utf8.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/random.hpp>
 #include <boost/format.hpp>
