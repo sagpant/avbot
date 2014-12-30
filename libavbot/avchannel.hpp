@@ -183,3 +183,5 @@ private:
 };
 
 boost::property_tree::ptree av_msg_make_json(channel_identifier ci, avbotmsg msg);
+
+avbotmsg from_json_string(std::string json_string);

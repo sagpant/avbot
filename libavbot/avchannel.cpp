@@ -4,6 +4,9 @@
 #include <systemd/sd-daemon.h>
 #endif
 
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/locale/encoding_utf.hpp>
+
 avchannel::avchannel(std::string name)
 	: m_name(std::move(name))
 {
@@ -64,4 +67,25 @@ boost::property_tree::ptree av_msg_make_json(channel_identifier ci, avbotmsg msg
 
     // TODO
     return ptree;
+}
+
+avbotmsg from_json_string(std::string json_string)
+{
+	std::wstringstream json_wstring;
+	json_wstring << boost::locale::conv::utf_to_utf<wchar_t>(json_string);
+
+	avbotmsg ret;
+
+	// 鉴于 boost 的 json 代码的严重的巨大的 bug , 只能使用 wide 版本才能处理好中文.
+
+	boost::property_tree::wptree json;
+	boost::property_tree::json_parser::read_json(json_wstring, json);
+
+	// 开始格式化!
+
+	
+
+
+
+	return ret;
 }

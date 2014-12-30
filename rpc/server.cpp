@@ -44,6 +44,7 @@ namespace js = boost::property_tree::json_parser;
 
 #include "rpc/server.hpp"
 #include "avhttpd.hpp"
+#include "../libavbot/avchannel.hpp"
 
 // avbot_rpc_server 由 acceptor_server 这个辅助类调用
 // 为其构造函数传入一个 m_socket, 是 shared_ptr 的.
@@ -111,6 +112,8 @@ private:
 		std::function<void (boost::system::error_code, pt::wptree)> cb
 	)> do_search;
 
+	std::function<void(std::string,avbotmsg)> send_broadcast_message;
+
 	int process_post( std::size_t bytestransfered );
 };
 
@@ -128,18 +131,16 @@ private:
  */
 int avbot_rpc_server::process_post( std::size_t bytes_transfered )
 {
-	pt::ptree msg;
+	pt::wptree msg;
 	std::string messagebody;
 	messagebody.resize( bytes_transfered );
 	m_streambuf->sgetn( &messagebody[0], bytes_transfered );
-	std::stringstream jsonpostdata( messagebody );
 
 	try
 	{
-		// 读取 json
-		js::read_json( jsonpostdata, msg );
+		auto channelname = avhttp::detail::wide_utf8(msg.get<std::wstring>(L"channel"));
 		// TODO 格式化成 avbotmsg
-// 		broadcast_message( msg );
+		send_broadcast_message(channelname, from_json_string(messagebody));
 	}
 	catch( const pt::ptree_error &err )
 	{

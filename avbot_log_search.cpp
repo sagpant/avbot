@@ -1,7 +1,12 @@
 ﻿#include <string>
 #include <vector>
+#include <memory>
+#include <utility>
+#include <functional>
 
-#include <boost/function.hpp>
+#include <boost/locale.hpp>
+#include <boost/locale/encoding_utf.hpp>
+
 #include <boost/property_tree/ptree.hpp>
 namespace pt = boost::property_tree;
 #include <boost/asio.hpp>
@@ -14,8 +19,9 @@ namespace pt = boost::property_tree;
 #include <boost-gregorian-date.h>
 #include <soci.h>
 
-#include "boost/logger.hpp"
 #include <avhttp/detail/escape_string.hpp>
+
+#include "boost/logger.hpp"
 
 void avlog_do_search(boost::asio::io_service & io_service, boost::logger& logger,
 	std::string c, std::string q, std::string date,
