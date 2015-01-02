@@ -277,6 +277,10 @@ if(NOT WIN32)
 endif()
 
 if(WIN32)
+	if(MSVC)
+		set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} "/MANIFESTINPUT:${CMAKE_CURRENT_SOURCE_DIR}/dpi.manifest")
+	endif()
+
 	if(NOT MSVC)
 		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static -lcrypt32 -lmswsock")
 	endif()
@@ -285,3 +289,4 @@ if(WIN32)
 		target_link_libraries(avbot -liconv)
 	endif()
 endif()
+
