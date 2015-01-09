@@ -176,6 +176,7 @@ include_directories(avboost/include)
 include_directories(avhttp/include)
 include_directories(deCAPTCHA/include)
 include_directories(avhttpd/include)
+include_directories(third_party/acceptor/include)
 
 add_subdirectory(protocols)
 add_subdirectory(libavbot)

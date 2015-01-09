@@ -35,7 +35,7 @@ namespace js = boost::property_tree::json_parser;
 #include <avhttp/detail/parsers.hpp>
 
 #include "boost/avloop.hpp"
-#include "boost/acceptor_server.hpp"
+#include "acceptor/acceptor.hpp"
 
 #include <soci-sqlite3.h>
 #include <boost-optional.h>
@@ -60,14 +60,15 @@ public:
 	on_message_signal_type &broadcast_message;
 
 	typedef boost::asio::ip::tcp Protocol;
-	typedef boost::asio::basic_stream_socket<Protocol> socket_type;
+	typedef boost::asio::ip::tcp::socket socket_type;
 
 	template<typename T>
-	avbot_rpc_server( boost::shared_ptr<socket_type> _socket,
+	explicit avbot_rpc_server(boost::asio::io_service& io, socket_type&& _socket,
 		on_message_signal_type & on_message, T do_search_func)
-		: m_socket( _socket )
+		: m_io_service(io)
+		, m_socket( std::move(_socket) )
 		, m_streambuf( new boost::asio::streambuf )
-		, m_responses(boost::ref(_socket->get_io_service()), 20)
+		, m_responses(boost::ref(m_io_service), 20)
 		, broadcast_message(on_message)
 		, do_search(do_search_func)
 	{
@@ -75,7 +76,7 @@ public:
 
 	void start()
 	{
-		avloop_idle_post(m_socket->get_io_service(),
+		avloop_idle_post(m_socket.get_io_service(),
 			std::bind<void>(&avbot_rpc_server::client_loop, shared_from_this(),
 					boost::system::error_code(), 0 )
 		);
@@ -92,7 +93,8 @@ private:
 	void callback_message(channel_identifier, avbotmsg);
 	void done_search(boost::system::error_code ec, boost::property_tree::wptree);
 private:
-	boost::shared_ptr<socket_type> m_socket;
+	boost::asio::io_service& m_io_service;
+	socket_type m_socket;
 
 	boost::signals2::scoped_connection m_connect;
 
@@ -154,7 +156,7 @@ int avbot_rpc_server::process_post( std::size_t bytes_transfered )
 void avbot_rpc_server::get_response_sended(std::shared_ptr< boost::asio::streambuf > v,
 	boost::system::error_code ec, std::size_t bytes_transfered)
 {
-	m_socket->get_io_service().post(
+	m_socket.get_io_service().post(
 		std::bind(&avbot_rpc_server::client_loop, shared_from_this(), ec, bytes_transfered)
 	);
 }
@@ -172,7 +174,7 @@ void avbot_rpc_server::on_pop(std::shared_ptr<boost::asio::streambuf> v)
 	);
 
 	avhttpd::async_write_response(
-		*m_socket, 200, opts, *v,
+		m_socket, 200, opts, *v,
 		std::bind(&avbot_rpc_server::get_response_sended, shared_from_this(), v, std::placeholders::_1, std::placeholders::_2)
 	);
 }
@@ -198,7 +200,7 @@ void avbot_rpc_server::done_search(boost::system::error_code ec, boost::property
 
 
 	avhttpd::async_write_response(
-		*m_socket, 200, opts, *v,
+		m_socket, 200, opts, *v,
 		std::bind<void>(&avbot_rpc_server::get_response_sended, shared_from_this(), v, std::placeholders::_1,std::placeholders::_2)
 	);
 }
@@ -218,7 +220,7 @@ void avbot_rpc_server::client_loop(boost::system::error_code ec, std::size_t byt
 
 		// 读取用户请求.
 		BOOST_ASIO_CORO_YIELD avhttpd::async_read_request(
-				*m_socket, *m_streambuf, m_request,
+				m_socket, *m_streambuf, m_request,
 				std::bind(&avbot_rpc_server::client_loop, shared_from_this(),std::placeholders::_1, 0)
 		);
 
@@ -226,14 +228,14 @@ void avbot_rpc_server::client_loop(boost::system::error_code ec, std::size_t byt
 		{
 			if (ec == avhttpd::errc::post_without_content)
 			{
-				BOOST_ASIO_CORO_YIELD avhttpd::async_write_response(*m_socket, avhttpd::errc::no_content,
+				BOOST_ASIO_CORO_YIELD avhttpd::async_write_response(m_socket, avhttpd::errc::no_content,
 					std::bind(&avbot_rpc_server::client_loop, shared_from_this(),std::placeholders::_1, 0)
 				);
 				return;
 			}
 			else if (ec == avhttpd::errc::header_missing_host)
 			{
-				BOOST_ASIO_CORO_YIELD avhttpd::async_write_response(*m_socket, avhttpd::errc::bad_request,
+				BOOST_ASIO_CORO_YIELD avhttpd::async_write_response(m_socket, avhttpd::errc::bad_request,
 					std::bind(&avbot_rpc_server::client_loop, shared_from_this(),std::placeholders::_1, 0)
 				);
 				return;
@@ -269,7 +271,7 @@ void avbot_rpc_server::client_loop(boost::system::error_code ec, std::size_t byt
 			{
 				// missing parameter
 				BOOST_ASIO_CORO_YIELD avhttpd::async_write_response(
-					*m_socket,
+					m_socket,
 					avhttpd::errc::internal_server_error,
 					std::bind(
 						&avbot_rpc_server::client_loop,
@@ -287,7 +289,7 @@ void avbot_rpc_server::client_loop(boost::system::error_code ec, std::size_t byt
 			else
 			{
 				BOOST_ASIO_CORO_YIELD avhttpd::async_write_response(
-					*m_socket,
+					m_socket,
 					avhttpd::errc::not_found,
 					std::bind(
 						&avbot_rpc_server::client_loop,
@@ -303,7 +305,7 @@ void avbot_rpc_server::client_loop(boost::system::error_code ec, std::size_t byt
 			// 这里进入 POST 处理.
 			// 读取 body
 			BOOST_ASIO_CORO_YIELD boost::asio::async_read(
-				*m_socket,
+				m_socket,
 				*m_streambuf,
 				boost::asio::transfer_exactly(
 					boost::lexical_cast<std::size_t>(
@@ -314,7 +316,7 @@ void avbot_rpc_server::client_loop(boost::system::error_code ec, std::size_t byt
 			);
 			// body 必须是合法有效的 JSON 格式
 			BOOST_ASIO_CORO_YIELD avhttpd::async_write_response(
-					*m_socket,
+					m_socket,
 					process_post(m_streambuf->size()),
 					avhttpd::response_opts()
 						(avhttpd::http_options::content_length, "4")
@@ -330,7 +332,7 @@ void avbot_rpc_server::client_loop(boost::system::error_code ec, std::size_t byt
 		}
 
 		// 继续
-		BOOST_ASIO_CORO_YIELD avloop_idle_post(m_socket->get_io_service(),
+		BOOST_ASIO_CORO_YIELD avloop_idle_post(m_socket.get_io_service(),
 			std::bind(&avbot_rpc_server::client_loop, shared_from_this(), ec, 0)
 		);
 	}}
@@ -351,48 +353,37 @@ void avbot_rpc_server::callback_message(channel_identifier, avbotmsg)
 void avlog_do_search(boost::asio::io_service & io_service, boost::logger& logger, std::string c, std::string q, std::string date,
 	std::function<void (boost::system::error_code, pt::wptree)> handler, soci::session & db);
 
-static void accepte_handler(
-	boost::shared_ptr<boost::asio::ip::tcp::socket> m_socket,
-	avbot & mybot, boost::logger& logger,
-	soci::session & db)
-{
-	std::make_shared<avbot_rpc_server>(
-		m_socket,
-		std::ref(mybot.on_message),
-		std::bind(
-			avlog_do_search,
-			std::ref(m_socket->get_io_service()), std::ref(logger),
-			std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4,
-			std::ref(db)
-		)
-	)->start();
-}
-
 bool avbot_start_rpc(boost::asio::io_service & io_service, boost::logger& logger, int port, avbot & mybot, soci::session & avlogdb)
 {
-	try
+	std::shared_ptr<boost::asio::ip::tcp::acceptor> accept_socket;
+
+	accept_socket.reset(new boost::asio::ip::tcp::acceptor(io_service));
+
+	if (!acceptor::listen(*accept_socket, std::to_string(port), logger.err()))
 	{
-		// 调用 acceptor_server 跑 avbot_rpc_server 。 在端口 6176 上跑哦!
-		boost::acceptor_server(
-			io_service,
-			boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v6(), port),
-			std::bind(accepte_handler,std::placeholders::_1, std::ref(mybot), std::ref(logger), std::ref(avlogdb))
-		);
+		return false;
 	}
-	catch (...)
+
+	acceptor::async_accept(*accept_socket, [&io_service]() -> boost::asio::ip::tcp::socket{
+		return boost::asio::ip::tcp::socket(io_service);
+	}, [&io_service, &logger, &mybot, &avlogdb](boost::asio::ip::tcp::socket&& sock, boost::system::error_code ec)
 	{
-		try
-		{
-			boost::acceptor_server(
-				io_service,
-				boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port),
-				std::bind(accepte_handler,std::placeholders::_1, std::ref(mybot), std::ref(logger), std::ref(avlogdb))
-			);
-		}
-		catch (...)
-		{
+		if (ec)
 			return false;
-		}
-	}
+		std::shared_ptr<avbot_rpc_server>(
+			new avbot_rpc_server(
+			io_service,
+			std::move(sock),
+			mybot.on_message,
+			std::bind(
+				avlog_do_search,
+				std::ref(io_service), std::ref(logger),
+				std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4,
+				std::ref(avlogdb)
+			)
+		))->start();
+		return true;
+	}, [accept_socket](){});
+
 	return true;
 }

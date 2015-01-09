@@ -10,3 +10,6 @@
 [submodule "avhttp"]
 	path = avhttp
 	url = git://github.com/avplayer/avhttp.git
+[submodule "third_party/acceptor"]
+	path = third_party/acceptor
+	url = git://github.com/avplayer/acceptor.git
