@@ -49,6 +49,11 @@ option(WITH_QT_GUI "a qt gui interface" OFF)
 option(USE_INTERNAL_SOCI "use bundled soci lib" WIN32)
 option(INTERNAL_OPENSSL "use bundled openssl" WIN32)
 
+if(WITH_ICU)
+	link_libraries(icudata)
+	link_libraries(icuuc)
+endif()
+
 if(WIN32)
 	set(ENABLE_LIBGCC_STATIC ON)
 	set(ENABLE_LIBSTDCXX_STATIC ON)
@@ -169,6 +174,8 @@ else()
 	include_directories(${SOCI_INCLUDE_DIRS}/sqlite3)
 endif()
 
+add_subdirectory(third_party/avhtml EXCLUDE_FROM_ALL)
+
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${PROJECT_SOURCE_DIR})
 
@@ -177,6 +184,7 @@ include_directories(avhttp/include)
 include_directories(deCAPTCHA/include)
 include_directories(avhttpd/include)
 include_directories(third_party/acceptor/include)
+include_directories(third_party/avhtml/include)
 
 add_subdirectory(protocols)
 add_subdirectory(libavbot)
@@ -244,6 +252,7 @@ target_link_libraries(avbot avimproto avim++ libavbot avlog extension ${SOCI_LIB
 target_link_libraries(avbot avbotui)
 
 target_link_libraries(avbot ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(avbot html5)
 
 if( NOT Boost_USE_STATIC_RUNTIME )
 	message(STATUS "dynamic link to boost is not recomanded")

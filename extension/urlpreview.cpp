@@ -7,6 +7,7 @@
 
 #include "urlpreview.hpp"
 #include "html.hpp"
+#include "html5.hpp"
 
 namespace detail
 {
@@ -51,7 +52,7 @@ static inline std::string get_char_set( std::string type,  const std::string & h
 	return "utf8";
 }
 
-inline std::size_t read_until_title(boost::system::error_code ec, std::size_t bytes_transferred, std::size_t max_transfer, boost::asio::streambuf & buf)
+inline std::size_t read_until_title(boost::system::error_code ec, std::size_t bytes_transferred, std::size_t max_transfer, boost::asio::streambuf & buf, html::dom& page)
 {
 	if (ec)
 		return 0;
@@ -59,16 +60,10 @@ inline std::size_t read_until_title(boost::system::error_code ec, std::size_t by
 	// 或则已经读到 content_length 也不读了.
 	if (bytes_transferred >= max_transfer)
 		return 0;
-	std::string data(boost::asio::buffer_cast<const char*>(buf.data()), boost::asio::buffer_size(buf.data()));
-	boost::to_lower( data );
-	if (data.find("</title>")==std::string::npos){
-		return max_transfer - bytes_transferred;
-	}
-	if (data.find("<meta>")==std::string::npos){
-		return max_transfer - bytes_transferred;
-	}
 
-	return 0;
+
+
+	return max_transfer - bytes_transferred;
 }
 
 struct urlpreview
@@ -79,8 +74,11 @@ struct urlpreview
 	std::string m_url;
 	std::shared_ptr<avhttp::http_stream> m_httpstream;
 
-	std::shared_ptr<boost::asio::streambuf> m_content;
+	std::shared_ptr<boost::array<char, 512>> m_content;
+
 	int m_redirect ;
+
+	std::shared_ptr<html::dom> m_html_page;
 
 	template<class MsgSender>
 	urlpreview( boost::asio::io_service &_io_service,
@@ -119,7 +117,7 @@ struct urlpreview
 			return;
 		}
 
-		m_content.reset( new boost::asio::streambuf );
+		m_content = std::make_shared<boost::array<char, 512>>();
 
 		unsigned content_length = 0;
 
@@ -137,44 +135,43 @@ struct urlpreview
 			content_length = 4096;
 		}
 
-		boost::asio::async_read(*m_httpstream, *m_content,
-						boost::bind(read_until_title, _1, _2, std::min<unsigned>( content_length, 4096 ), boost::ref(*m_content) ),
-						*this
-		);
+		m_html_page = std::make_shared<html::dom>();
+
+		m_httpstream->async_read_some(boost::asio::buffer(*m_content, 512), *this);
 	}
 
 	// boost::asio::async_read 回调.
 	void operator()( const boost::system::error_code &ec, int bytes_transferred )
 	{
+		bool try_http_redirect = false;
 		if( ec && ec != boost::asio::error::eof )
 		{
 			m_sender( boost::str( boost::format("@%s, 获取url有错 %s") % m_speaker % ec.message() ) );
 			return;
 		}
 
+		m_html_page->append_partial_html(std::string( &(*m_content)[0], bytes_transferred));
+
 		// 解析 <title>
-		std::string content;
-		content.resize( m_content->size() );
-		m_content->sgetn( &content[0], m_content->size() );
+		auto title = (*m_html_page)["title"].to_plain_text();
 
-		// 转换成小写, 统一处理, 避免遗漏大写的title标签.
-		boost::to_lower( content );
-
-		//去掉换行.
-		boost::replace_all( content, "\r", "" );
-		boost::replace_all( content, "\n", "" );
-		// 获取charset
-		std::string charset = get_char_set( m_httpstream->response_options().find( avhttp::http_options::content_type ), content );
-		content = content.substr(0, content.find("</title>")+8);
-		// 匹配.
-		boost::regex ex( "<title[^>]*>(.*)</title>" );
-		boost::cmatch what;
-
-		if( boost::regex_search( content.c_str(), what, ex ) )
+		if (title.empty() && !ec)
 		{
-			std::string title = what[1];
-			boost::trim_left(title);
+			m_httpstream->async_read_some(boost::asio::buffer(*m_content, 512), *this);
+			return;
+		}else if (ec ==  boost::asio::error::eof)
+		{
+			try_http_redirect = true;
+			// 还是没有 title ?
+			m_sender( boost::str( boost::format("@%s, 获取url有错 %s") % m_speaker % ec.message() ) );
+			return;
+		}
 
+		// 获取charset
+		auto charset = (*m_html_page).charset();
+
+		if(!try_http_redirect)
+		{
 			try
 			{
 				if( charset != "utf8" && charset != "utf" && charset != "utf-8" )
@@ -196,12 +193,22 @@ struct urlpreview
 		else
 		{
 			// 解析是不是 html 重定向
-			boost::regex ex("<meta +http-equiv=\"refresh\" +content=\"[^;];url=(.*)\" *>");
-			// title 都没有！
-			if (m_redirect < 10 && boost::regex_search(content.c_str(), what, ex)){
-				urlpreview(io_service, m_sender, m_speaker, what[1], m_redirect + 1);
-			}else{
-				m_sender( boost::str( boost::format("@%s ⇪ url 无标题 ") % m_speaker ) );
+
+			auto dom_page = (*m_html_page)["meta [http-equiv][content][url]"];
+
+			auto cd = dom_page.get_children();
+
+			if (!cd.empty())
+			{
+				auto url = cd[0]->get_attr("url");
+
+				if (m_redirect < 10  && !url.empty())
+				{
+					urlpreview(io_service, m_sender, m_speaker, url, m_redirect + 1);
+				}else
+				{
+					m_sender( boost::str( boost::format("@%s ⇪ url 无标题 ") % m_speaker ) );
+				}
 			}
 		}
 	}
