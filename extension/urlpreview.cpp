@@ -78,22 +78,6 @@ struct urlpreview
 
 		m_content = std::make_shared<boost::array<char, 512>>();
 
-		unsigned content_length = 0;
-
-		try
-		{
-			std::string _content_length = opt.find( avhttp::http_options::content_length );
-
-			content_length = boost::lexical_cast<unsigned>( _content_length );
-
-			// 下载第一个数据包. 咱不下全，就第一个足够了.
-			// std::min( );
-		}
-		catch( boost::bad_lexical_cast & err )
-		{
-			content_length = 4096;
-		}
-
 		m_html_page = std::make_shared<html::dom>();
 
 		m_httpstream->async_read_some(boost::asio::buffer(*m_content, 512), *this);
