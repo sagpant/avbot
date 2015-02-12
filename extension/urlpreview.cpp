@@ -40,9 +40,8 @@ struct urlpreview
 	std::shared_ptr<html::dom> m_html_page;
 
 	template<class MsgSender>
-	urlpreview( boost::asio::io_service &_io_service,
-				MsgSender sender,
-				std::string speaker, std::string url, int redirectlevel = 0 )
+	urlpreview(boost::asio::io_service &_io_service, MsgSender sender,
+		std::string speaker, std::string url, int redirectlevel = 0)
 		: io_service( _io_service ), m_sender( sender )
 		, m_speaker( speaker ), m_url( url )
 		, m_httpstream( new avhttp::http_stream( io_service ) )
