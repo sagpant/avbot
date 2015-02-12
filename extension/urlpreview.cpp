@@ -25,47 +25,6 @@ static inline bool is_html( const std::string contenttype )
 	return false;
 }
 
-static inline std::string get_char_set( std::string type,  const std::string & header )
-{
-	boost::cmatch what;
-	// 首先是 text/html; charset=XXX
-	boost::regex ex( "charset=([a-zA-Z0-9\\-_]+)" );
-	boost::regex ex2( "<meta charset=[\"\']?([a-zA-Z0-9\\-_]+)[\"\']?" );
-
-	if( boost::regex_search( type.c_str(), what, ex ) )
-	{
-		return what[1];
-	}
-	else if( boost::regex_search( type.c_str(), what, ex2 ) )
-	{
-		return what[1];
-	}
-	else if( boost::regex_search( header.c_str(), what, ex ) )
-	{
-		return what[1];
-	}
-	else if( boost::regex_search( header.c_str(), what, ex2 ) )
-	{
-		return what[1];
-	}
-
-	return "utf8";
-}
-
-inline std::size_t read_until_title(boost::system::error_code ec, std::size_t bytes_transferred, std::size_t max_transfer, boost::asio::streambuf & buf, html::dom& page)
-{
-	if (ec)
-		return 0;
-	// 有 </title> 就不读了, 或则已经读取到 4096 个字节也就不读了
-	// 或则已经读到 content_length 也不读了.
-	if (bytes_transferred >= max_transfer)
-		return 0;
-
-
-
-	return max_transfer - bytes_transferred;
-}
-
 struct urlpreview
 {
 	boost::asio::io_service &io_service;
