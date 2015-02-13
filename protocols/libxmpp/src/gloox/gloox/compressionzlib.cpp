@@ -1,5 +1,5 @@
 ﻿/*
-  Copyright (c) 2005-2014 by Jakob Schroeter <js@camaya.net>
+  Copyright (c) 2005-2015 by Jakob Schröter <js@camaya.net>
   This file is part of the gloox library. http://camaya.net/gloox
 
   This software is distributed under a license. The full license
@@ -119,13 +119,17 @@ namespace gloox
 
   void CompressionZlib::cleanup()
   {
-    if( !m_valid )
-      return;
+    m_compressMutex.lock();
 
-    inflateEnd( &m_zinflate );
-    deflateEnd( &m_zdeflate );
+    if( m_valid )
+    {
+       inflateEnd( &m_zinflate );
+       deflateEnd( &m_zdeflate );
 
-    m_valid = false;
+       m_valid = false;
+    }
+
+    m_compressMutex.unlock();
   }
 
 }

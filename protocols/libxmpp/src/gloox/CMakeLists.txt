@@ -43,6 +43,7 @@ gloox/flexoff.cpp
 gloox/gloox.cpp
 gloox/inbandbytestream.cpp
 gloox/instantmucroom.cpp
+gloox/iodata.cpp
 gloox/iq.cpp
 gloox/jid.cpp
 gloox/lastactivity.cpp

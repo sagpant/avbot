@@ -1,5 +1,5 @@
-/*
-  Copyright (c) 2005-2014 by Jakob Schroeter <js@camaya.net>
+﻿/*
+  Copyright (c) 2005-2015 by Jakob Schröter <js@camaya.net>
   This file is part of the gloox library. http://camaya.net/gloox
 
   This software is distributed under a license. The full license
@@ -19,9 +19,20 @@
 #  pragma warning( disable:4786 )
 #endif
 
+#if defined( _WIN32 ) && !defined( __SYMBIAN32__ )
+#  if defined( GLOOX_EXPORTS ) || defined( DLL_EXPORT )
+#    define GLOOX_API __declspec( dllexport )
+#  else
+#    if defined( GLOOX_IMPORTS ) || defined( DLL_IMPORT )
+#      define GLOOX_API __declspec( dllimport )
+#    endif
+#  endif
+#endif
+
 #ifndef GLOOX_API
 #  define GLOOX_API
 #endif
+
 
 #if defined( __GNUC__ ) && ( __GNUC__ - 0 > 3 || ( __GNUC__ - 0 == 3 && __GNUC_MINOR__ - 0 >= 2 ) )
 #  define GLOOX_DEPRECATED __attribute__ ( (__deprecated__) )

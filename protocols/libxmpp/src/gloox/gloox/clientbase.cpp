@@ -1,5 +1,5 @@
 ﻿/*
-  Copyright (c) 2005-2014 by Jakob Schroeter <js@camaya.net>
+  Copyright (c) 2005-2015 by Jakob Schröter <js@camaya.net>
   This file is part of the gloox library. http://camaya.net/gloox
 
   This software is distributed under a license. The full license
@@ -188,6 +188,9 @@ namespace gloox
   {
     if( m_server.empty() )
       return false;
+
+    if( !m_connection )
+      m_connection = new ConnectionTCPClient( this, m_logInstance, m_server, m_port );
 
     if( m_connection->state() >= StateConnecting )
       return true;

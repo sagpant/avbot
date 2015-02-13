@@ -1,5 +1,5 @@
 ﻿/*
-  Copyright (c) 2009-2014 by Jakob Schroeter <js@camaya.net>
+  Copyright (c) 2009-2015 by Jakob Schröter <js@camaya.net>
   This file is part of the gloox library. http://camaya.net/gloox
 
   This software is distributed under a license. The full license
@@ -49,11 +49,7 @@ namespace gloox
   {
     if( m_initLib )
       SSL_library_init();
-#ifndef OPENSSL_NO_COMP
-#ifdef HAVE_ZLIB
-    SSL_COMP_add_compression_method( 193, COMP_zlib() );
-#endif
-#endif
+
     OpenSSL_add_all_algorithms();
 
     if( !setType() ) //inits m_ctx
@@ -271,6 +267,8 @@ namespace gloox
 
       if( ASN1_UTCTIME_cmp_time_t( X509_get_notAfter( peer ), time( 0 ) ) != 1 )
         m_certInfo.status |= CertExpired;
+
+      X509_free( peer );
     }
     else
     {

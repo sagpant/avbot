@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2007-2014 by Jakob Schroeter <js@camaya.net>
+ * Copyright (c) 2007-2015 by Jakob Schröter <js@camaya.net>
  * This file is part of the gloox library. http://camaya.net/gloox
  *
  * This software is distributed under a license. The full license
@@ -24,8 +24,6 @@
 #elif defined( HAVE_OPENSSL )
 # define HAVE_TLS
 # include "tlsopensslclient.h"
-#ifndef __SYMBIAN32__
-#endif
 #elif defined( HAVE_WINTLS )
 # define HAVE_TLS
 # include "tlsschannel.h"

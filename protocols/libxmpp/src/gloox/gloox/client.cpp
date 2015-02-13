@@ -1,5 +1,5 @@
 ﻿/*
-  Copyright (c) 2004-2014 by Jakob Schroeter <js@camaya.net>
+  Copyright (c) 2004-2015 by Jakob Schröter <js@camaya.net>
   This file is part of the gloox library. http://camaya.net/gloox
 
   This software is distributed under a license. The full license
@@ -105,7 +105,7 @@ namespace gloox
       m_rosterManager( 0 ), m_auth( 0 ),
       m_presence( Presence::Available, JID() ), m_resourceBound( false ),
       m_forceNonSasl( false ), m_manageRoster( true ),
-      m_smId( EmptyString ), m_smLocation( EmptyString ), m_smResume( false ), m_smMax( 0 ),
+      m_smId( EmptyString ), m_smLocation( EmptyString ), m_smResume( false ), m_smWanted( false ), m_smMax( 0 ),
       m_streamFeatures( 0 )
   {
     m_jid.setServer( server );
@@ -117,7 +117,7 @@ namespace gloox
       m_rosterManager( 0 ), m_auth( 0 ),
       m_presence( Presence::Available, JID() ), m_resourceBound( false ),
       m_forceNonSasl( false ), m_manageRoster( true ),
-      m_smId( EmptyString ), m_smLocation( EmptyString ), m_smResume( false ), m_smMax( 0 ),
+      m_smId( EmptyString ), m_smLocation( EmptyString ), m_smResume( false ), m_smWanted( false ), m_smMax( 0 ),
       m_streamFeatures( 0 )
   {
     m_jid = jid;
