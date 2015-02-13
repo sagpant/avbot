@@ -86,7 +86,7 @@ struct urlpreview
 	void operator()( const boost::system::error_code &ec, int bytes_transferred )
 	{
 		bool try_http_redirect = false;
-		if( ec && ec != boost::asio::error::eof )
+		if( ec && (ec != boost::asio::error::eof ))
 		{
 			m_sender( boost::str( boost::format("@%s, 获取url有错 %s") % m_speaker % ec.message() ) );
 			return;
