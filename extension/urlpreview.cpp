@@ -104,8 +104,6 @@ struct urlpreview
 		}else if (ec ==  boost::asio::error::eof)
 		{
 			try_http_redirect = true;
-			// 还是没有 title ?
-			m_sender( boost::str( boost::format("@%s, 获取url有错 %s") % m_speaker % ec.message() ) );
 			return;
 		}
 
@@ -151,6 +149,10 @@ struct urlpreview
 				{
 					m_sender( boost::str( boost::format("@%s ⇪ url 无标题 ") % m_speaker ) );
 				}
+			}else
+			{
+				// 还是没有 title ?
+				m_sender( boost::str( boost::format("@%s, 获取url有错 %s") % m_speaker % ec.message() ) );
 			}
 		}
 	}
