@@ -189,9 +189,6 @@ namespace gloox
     if( m_server.empty() )
       return false;
 
-    if( !m_connection )
-      m_connection = new ConnectionTCPClient( this, m_logInstance, m_server, m_port );
-
     if( m_connection->state() >= StateConnecting )
       return true;
 

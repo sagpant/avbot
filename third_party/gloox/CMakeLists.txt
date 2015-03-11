@@ -95,6 +95,8 @@ gloox/xhtmlim.cpp
 
 add_library(gloox STATIC ${GLOOX_SRC})
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
 target_link_libraries(gloox  ${OPENSSL_LIBRARIES})
 
 if (ZLIB_FOUND)

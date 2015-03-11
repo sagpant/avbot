@@ -174,6 +174,44 @@ else()
 	include_directories(${SOCI_INCLUDE_DIRS}/sqlite3)
 endif()
 
+option(INTERNALGLOOX "use bundled gloox" ON)
+
+find_path(GLOOX_INCLUDE_DIR
+  NAMES gloox/gloox.h
+  PATHS
+  /usr/include
+  /usr/local/include
+  $ENV{LIB_DIR}/include
+  $ENV{LIB_DIR}/include/sqlite
+  $ENV{LIB_DIR}/include/sqlite3
+  $ENV{ProgramFiles}/SQLite/*/include
+  $ENV{ProgramFiles}/SQLite3/*/include
+  $ENV{SystemDrive}/SQLite/*/include
+  $ENV{SystemDrive}/SQLite3/*/include
+  $ENV{GLOOX_ROOT_DIR}/include
+  ${GLOOX_ROOT_DIR}/include)
+
+find_library(GLOOX_LIBRARIES NAMES gloox HINTS /usr/local/lib /usr/local/lib64 /usr/lib64 /usr/lib /usr/local/lib)
+
+find_package_handle_standard_args(GLOOX
+  DEFAULT_MSG
+  GLOOX_LIBRARIES
+  GLOOX_INCLUDE_DIR)
+
+if(GLOOX_FOUND AND NOT INTERNALGLOOX)
+	message(STATUS "gloox found on your system. nice!")
+else()
+	if (GLOOX_FOUND)
+		message(STATUS "gloox found on your system. but we are not going to use it!")
+	else()
+		message(STATUS "gloox not found on your system, try using internal one now")
+	endif()
+
+	add_subdirectory(third_party/gloox)
+	set(GLOOX_LIBRARIES gloox)
+endif()
+
+
 add_subdirectory(third_party/avhtml EXCLUDE_FROM_ALL)
 
 include_directories(${Boost_INCLUDE_DIRS})
