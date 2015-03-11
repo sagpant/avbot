@@ -209,6 +209,7 @@ else()
 
 	add_subdirectory(third_party/gloox)
 	set(GLOOX_LIBRARIES gloox)
+	set(GLOOX_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/gloox)
 endif()
 
 

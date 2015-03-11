@@ -8,6 +8,7 @@ add_library(xmpp STATIC src/xmpp_impl.hpp src/xmpp_impl.cpp include/libxmpp/xmpp
 
 target_include_directories(xmpp PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+include_directories(${GLOOX_INCLUDE_DIR})
 
 if(NOT GLOOX_FOUND)
 	target_include_directories(xmpp PRIVATE src/gloox)
