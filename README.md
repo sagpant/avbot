@@ -6,6 +6,12 @@ avbot 连通 IRC、XMPP 和 QQ群, 并作为 AVIM 群机器人实现 AVIM 群聊
 
 编译请参考 [社区维基的avbot编译指导](http://wiki.avplayer.org/%E7%BC%96%E8%AF%91avbot)
 
+## For Windows 编译注意
+
+windows 版本有自动编译版，请到 ftp://ci.avplayer.org 下载。
+
+
+
 想了解 avbot 最重要的子模块 libwebqq 请点开 libwebqq 目录查看其 README.md
 
 # 支持的系统

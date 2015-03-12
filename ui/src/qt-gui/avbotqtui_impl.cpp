@@ -39,14 +39,11 @@ avbotqtui_impl::avbotqtui_impl(boost::asio::io_service& io_service, boost::logge
     : m_io_service(io_service)
     , logger(_logger)
 {
-    app.reset(new QApplication(argc, argv));
-	app->setQuitOnLastWindowClosed(false);
-
     qRegisterMetaType<std::function<void()>>("std::function<void()>");
     qRegisterMetaType<std::string>("std::string");
     QObject::connect(this, &avbotqtui_impl::post_event, this, &avbotqtui_impl::execute_post, Qt::QueuedConnection);
 
-	app->setWindowIcon(load_icon());
+	qApp->setWindowIcon(load_icon());
     // 创建 IO 线程
     m_io_thread = boost::thread([this]()
 	{
@@ -62,7 +59,7 @@ avbotqtui_impl::avbotqtui_impl(boost::asio::io_service& io_service, boost::logge
 
 	mainwindow->setCentralWidget(log_browser);
 
-	mainwindow->resize(app->primaryScreen()->availableSize() / 3);
+	mainwindow->resize(qApp->primaryScreen()->availableSize() / 3);
 
 	mainwindow->show();
 
@@ -100,7 +97,7 @@ void avbotqtui_impl::run()
 		m_tray->setToolTip("avbot is running");
 		m_tray->show();
 	});
-    app->exec();
+    qApp->exec();
 }
 
 void avbotqtui_impl::write_log(std::string l, std::string m)

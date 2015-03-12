@@ -25,14 +25,14 @@ public:
 	void report_fatal_error(std::string text)
 	{
 		QMessageBox mbox;
-		mbox.moveToThread(app->thread());
+		mbox.moveToThread(qApp->thread());
 
-		mbox.setWindowIcon(app->windowIcon());
+		mbox.setWindowIcon(qApp->windowIcon());
 		mbox.setIcon(QMessageBox::Critical);
 		mbox.setText(text.c_str());
 
 		mbox.exec();
-		::exit(1);
+		qApp->quit();
 	}
 
 	void show_vc_and_get_input_with_timeout(std::string imgdata, int timeout_sec, avbotui::vc_result_call_back cb);
@@ -53,7 +53,7 @@ public:
 
 	void quit()
 	{
-		app->quit();
+		qApp->quit();
 	}
 
 Q_SIGNALS:
@@ -74,7 +74,6 @@ private:
 	boost::logger& logger;
 	boost::thread m_io_thread;
 
-	QScopedPointer<QApplication> app;
 	QScopedPointer<QSystemTrayIcon> m_tray;
 };
 

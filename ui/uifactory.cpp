@@ -16,8 +16,6 @@ void ui_init(boost::asio::io_service& io_service, boost::logger& logger, int arg
 
 #if defined(WITH_QT_GUI)
 	static_avbot_ui_instance.reset(new avbotqtui(io_service, logger, argc, argv));
-#elif defined(WITH_WIN32_GUI)
-	static_avbot_ui_instance.reset(new avbotwin32ui(io_service, logger, argc, argv));
 #else
 	static_avbot_ui_instance.reset(new avbotcliui(io_service, logger, argc, argv));
 #endif

@@ -4,6 +4,7 @@
 #include <boost/logger.hpp>
 #include "avbotui.hpp"
 
+class QApplication;
 class avbotqtui_impl;
 class avbotqtui : public avbotui
 {
@@ -17,4 +18,5 @@ public:
     virtual void quit();
 
 	avbotqtui_impl* impl;
+	std::shared_ptr<QApplication> app;
 };

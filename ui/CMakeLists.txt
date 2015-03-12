@@ -10,12 +10,7 @@ if (Qt5Widgets_FOUND AND WITH_QT_GUI)
 	set(ENABLE_QT_STATIC ON)
 	add_subdirectory(src/qt-gui)
 else()
-	# 暂时不实现 win32 GUI
-	#if(WIN32)
-	#	add_subdirectory(src/win32-gui)
-	#else()
-		add_subdirectory(src/cli)
-	#endif()
+	add_subdirectory(src/cli)
 endif()
 
 target_include_directories(avbotui_base PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)

@@ -106,7 +106,12 @@ if(ENABLE_LIBGCC_STATIC OR WIN32)
 	endif()
 endif()
 
+set(REQUIRED_QT_VERSION 5.3.0)
+
+# find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Core DBus Widgets Network)
+find_package(Qt5Core REQUIRED)
 find_package(Qt5Widgets)
+
 find_package(Boost 1.57 REQUIRED COMPONENTS timer chrono date_time filesystem system program_options regex locale)
 find_package(systemd)
 find_package(Threads REQUIRED)
