@@ -62,7 +62,6 @@ void avlog_do_search(boost::asio::io_service & io_service, boost::logger& logger
 		onemsg.put(L"date", boost::locale::conv::utf_to_utf<wchar_t>(r_date[i]));
 		onemsg.put(L"channel", boost::locale::conv::utf_to_utf<wchar_t>(r_channel[i]));
 		onemsg.put(L"nick", boost::locale::conv::utf_to_utf<wchar_t>(r_nick[i]));
-		onemsg.put(L"channel", boost::locale::conv::utf_to_utf<wchar_t>(r_channel[i]));
 		onemsg.put(L"message", boost::locale::conv::utf_to_utf<wchar_t>(r_message[i]));
 		onemsg.put(L"id", boost::locale::conv::utf_to_utf<wchar_t>(r_rowid[i]));
 

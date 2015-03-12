@@ -138,11 +138,11 @@ public:
 				(avhttp::http_options::referer, "https://ui.ptlogin2.qq.com/cgi-bin/login?daid=164&target=self&style=16&mibao_css=m_webqq&appid=501004106&enable_qlogin=0&no_verifyimg=1&s_url=http%3A%2F%2Fw.qq.com%2Fproxy.html&f_url=loginerroralert&strong_login=1&login_state=10&t=20131024001")
 			);
 
-			url = boost::str(boost::format("%s%s?uin=%s&appid=%s&js_ver=10068&js_type=0&login_sig=%s&u1=%s")
+			url = boost::str(boost::format("%s%s?pt_tea=1&uin=%s&appid=%s&js_ver=10114&js_type=0&login_sig=%s&u1=%s")
                     % LWQQ_URL_CHECK_HOST
                     % VCCHECKPATH % m_webqq->m_qqnum % APPID
                     % m_webqq->m_login_sig
-                    % "http%3A%2F%2Fw.qq.com%2Fproxy.html&r=0.026550371946748808"
+                    % "http%3A%2F%2Fw.qq.com%2Fproxy.html&r=0.6643063573261355"
 			);
 
 			m_webqq->m_cookie_mgr.get_cookie(url, *stream);

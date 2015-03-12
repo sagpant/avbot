@@ -110,6 +110,7 @@ set(REQUIRED_QT_VERSION 5.3.0)
 
 # find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Core DBus Widgets Network)
 find_package(Qt5Core REQUIRED)
+find_package(Qt5DBus)
 find_package(Qt5Widgets)
 
 find_package(Boost 1.57 REQUIRED COMPONENTS timer chrono date_time filesystem system program_options regex locale)
@@ -251,11 +252,6 @@ set(AVBOT_SOURCES
 	${PROJECT_BINARY_DIR}/avbot.rc
 )
 
-set(AVBOTRPC_SOURCES
-	rpc/server.cpp
-	rpc/server.hpp
-	)
-
 if(NOT WIN32)
 	list(APPEND AVBOT_SOURCES backtrace.cpp)
 endif()
@@ -274,7 +270,11 @@ if(MSVC)
 
 endif()
 
-add_executable(avbot ${AVBOT_SOURCES} ${AVBOTRPC_SOURCES})
+add_subdirectory(rpc)
+
+add_executable(avbot ${AVBOT_SOURCES})
+
+target_link_libraries(avbot avbotrpc)
 
 if (Qt5Widgets_FOUND AND WITH_QT_GUI)
 	set_target_properties(avbot PROPERTIES WIN32_EXECUTABLE TRUE)

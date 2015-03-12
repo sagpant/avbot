@@ -46,6 +46,10 @@ namespace js = boost::property_tree::json_parser;
 #include "avhttpd.hpp"
 #include "../libavbot/avchannel.hpp"
 
+#ifdef QT_DBUS_LIB
+#include "dbusrpc.hpp"
+#endif
+
 // avbot_rpc_server 由 acceptor_server 这个辅助类调用
 // 为其构造函数传入一个 m_socket, 是 shared_ptr 的.
 class rpc_connection
@@ -380,5 +384,15 @@ bool avbot_start_rpc(boost::asio::io_service & io_service, boost::logger& logger
 		return true;
 	}, [accept_socket](){});
 
+#ifdef QT_DBUS_LIB
+	new DBusRPC(io_service,
+		mybot.on_message,
+		std::bind(
+			&avlog_do_search, std::ref(io_service), std::ref(logger),
+			std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4,
+			std::ref(avlogdb)
+		)
+	);
+#endif
 	return true;
 }

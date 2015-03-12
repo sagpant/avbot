@@ -3,8 +3,17 @@
 #include <fstream>
 #include "avbotcli.hpp"
 
+#include <boost/thread.hpp>
+#include <QCoreApplication>
+
 avbotcliui::avbotcliui(boost::asio::io_service& io_service, boost::logger& logger, int argc, char* argv[])
 	: avbotui(io_service)
+{
+	if (QCoreApplication::instance() == nullptr)
+		app = new QCoreApplication(argc, argv);
+}
+
+avbotcliui::~avbotcliui()
 {
 
 }
@@ -39,4 +48,17 @@ void avbotcliui::report_fatal_error(std::string text)
 {
     std::cerr  << text << std::endl;
 	exit(1);
+}
+
+void avbotcliui::run()
+{
+    // 创建 IO 线程
+    m_io_thread = boost::thread([this]()
+	{
+		avbotui::run();
+	});
+
+	app->exec();
+	m_io_service.stop();
+	m_io_thread.join();
 }

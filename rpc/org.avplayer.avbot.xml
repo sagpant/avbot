@@ -1,0 +1,23 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node name="/org/avplayer/avbot">
+        <interface name="org.avplayer.avbot">
+                <method name="quiet"/>
+				<signal name="account_added">
+					<arg name="account_type" type="s" direction="out"/>
+					<arg name="account_name" type="s" direction="out"/>
+				</signal>
+				<signal name="account_status_changed">
+					<arg name="account_type" type="s" direction="out"/>
+					<arg name="account_name" type="s" direction="out"/>
+					<arg name="change_reason" type="s" direction="out"/>
+					<arg name="account_name" type="s" direction="out"/>
+				</signal>
+
+				<method name="search">
+					<arg type="(ia(sssss)d)" direction="out"/>
+					<arg name="searchstring" type="s" direction="in"/>
+
+					<annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="SearchResult"/>
+				</method>
+        </interface>
+</node>
