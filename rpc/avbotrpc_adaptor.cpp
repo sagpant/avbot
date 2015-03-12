@@ -33,10 +33,18 @@ AvbotAdaptor::~AvbotAdaptor()
     // destructor
 }
 
-void AvbotAdaptor::quiet()
+int AvbotAdaptor::add_qq_account(const QString &qqnumber, const QString &qqpassword)
 {
-    // handle method call org.avplayer.avbot.quiet
-    QMetaObject::invokeMethod(parent(), "quiet");
+    // handle method call org.avplayer.avbot.add_qq_account
+    int out0;
+    QMetaObject::invokeMethod(parent(), "add_qq_account", Q_RETURN_ARG(int, out0), Q_ARG(QString, qqnumber), Q_ARG(QString, qqpassword));
+    return out0;
+}
+
+void AvbotAdaptor::quit()
+{
+    // handle method call org.avplayer.avbot.quit
+    QMetaObject::invokeMethod(parent(), "quit");
 }
 
 SearchResult AvbotAdaptor::search(const QString &searchstring)

@@ -1,8 +1,10 @@
 
 #include <QtDBus>
+#include <QtDBus/QDBusConnection>
 
 #include "dbusrpc.hpp"
 #include "avbotrpc_adaptor.h"
+#include <QCoreApplication>
 
 // Marshall the SearchResultData data into a D-Bus argument
 QDBusArgument &operator<<(QDBusArgument &argument, const SearchResultData &mystruct)
@@ -49,6 +51,8 @@ DBusRPC::DBusRPC(boost::asio::io_service& io, on_message_signal_type & on_messag
 	QDBusConnection::sessionBus().registerObject("/avbotrpc", this);
 	QDBusConnection::sessionBus().registerService("org.avplayer.avbot");
 	new AvbotAdaptor(this);
+
+	connect(this, SIGNAL(quit()), QCoreApplication::instance(), SLOT(quit()));
 }
 
 SearchResult DBusRPC::search(QString searchstring)
@@ -60,12 +64,6 @@ SearchResult DBusRPC::search(QString searchstring)
 int DBusRPC::dsearch(QString searchstring)
 {
 
-}
-
-void DBusRPC::quiet()
-{
-	this->deleteLater();
-	QCoreApplication::instance()->quit();
 }
 
 

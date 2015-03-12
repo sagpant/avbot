@@ -40,24 +40,26 @@ public:
 	> on_message_signal_type;
 
 	DBusRPC(boost::asio::io_service& io, on_message_signal_type & on_message, std::function<void(
-		std::string c,
-		std::string q,
-		std::string date,
-		std::function<void (boost::system::error_code, pt::wptree)> cb
+		std::string,
+		std::string,
+		std::string,
+		std::function<void (boost::system::error_code, pt::wptree)>
 	)> do_search_func);
 
+Q_SIGNALS:
+	void quit();
+
 public Q_SLOTS:
-	void quiet();
 
 	SearchResult search(QString searchstring);
 	int dsearch(QString searchstring);
 
 private:
 	std::function<void(
-		std::string c,
-		std::string q,
-		std::string date,
-		std::function<void (boost::system::error_code, pt::wptree)> cb
+		std::string,
+		std::string,
+		std::string,
+		std::function<void (boost::system::error_code, pt::wptree)>
 	)> do_search;
 };
 

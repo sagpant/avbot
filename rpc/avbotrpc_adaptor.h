@@ -9,8 +9,8 @@
  * before re-generating it.
  */
 
-#ifndef AVBOTRPC_ADAPTOR_H_1426187128
-#define AVBOTRPC_ADAPTOR_H_1426187128
+#ifndef AVBOTRPC_ADAPTOR_H_1426190137
+#define AVBOTRPC_ADAPTOR_H_1426190137
 
 #include <QtCore/QObject>
 #include <QtDBus/QtDBus>
@@ -33,8 +33,18 @@ class AvbotAdaptor: public QDBusAbstractAdaptor
     Q_CLASSINFO("D-Bus Interface", "org.avplayer.avbot")
     Q_CLASSINFO("D-Bus Introspection", ""
 "  <interface name=\"org.avplayer.avbot\">\n"
-"    <method name=\"quiet\"/>\n"
+"    <method name=\"quit\"/>\n"
+"    <signal name=\"channel_added\">\n"
+"      <arg direction=\"out\" type=\"s\" name=\"channel_name\"/>\n"
+"    </signal>\n"
+"    <signal name=\"channel_removed\">\n"
+"      <arg direction=\"out\" type=\"s\" name=\"channel_name\"/>\n"
+"    </signal>\n"
 "    <signal name=\"account_added\">\n"
+"      <arg direction=\"out\" type=\"s\" name=\"account_type\"/>\n"
+"      <arg direction=\"out\" type=\"s\" name=\"account_name\"/>\n"
+"    </signal>\n"
+"    <signal name=\"account_removed\">\n"
 "      <arg direction=\"out\" type=\"s\" name=\"account_type\"/>\n"
 "      <arg direction=\"out\" type=\"s\" name=\"account_name\"/>\n"
 "    </signal>\n"
@@ -44,10 +54,22 @@ class AvbotAdaptor: public QDBusAbstractAdaptor
 "      <arg direction=\"out\" type=\"s\" name=\"change_reason\"/>\n"
 "      <arg direction=\"out\" type=\"s\" name=\"account_name\"/>\n"
 "    </signal>\n"
+"    <signal name=\"on_message\">\n"
+"      <arg direction=\"out\" type=\"s\" name=\"channel_name\"/>\n"
+"      <arg direction=\"out\" type=\"s\" name=\"account_type\"/>\n"
+"      <arg direction=\"out\" type=\"s\" name=\"account_name\"/>\n"
+"      <arg direction=\"out\" type=\"s\" name=\"nick\"/>\n"
+"      <arg direction=\"out\" type=\"s\" name=\"message\"/>\n"
+"    </signal>\n"
 "    <method name=\"search\">\n"
 "      <arg direction=\"out\" type=\"(ia(sssss)d)\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"searchstring\"/>\n"
 "      <annotation value=\"SearchResult\" name=\"org.qtproject.QtDBus.QtTypeName.Out0\"/>\n"
+"    </method>\n"
+"    <method name=\"add_qq_account\">\n"
+"      <arg direction=\"out\" type=\"i\"/>\n"
+"      <arg direction=\"in\" type=\"s\" name=\"qqnumber\"/>\n"
+"      <arg direction=\"in\" type=\"s\" name=\"qqpassword\"/>\n"
 "    </method>\n"
 "  </interface>\n"
         "")
@@ -57,11 +79,16 @@ public:
 
 public: // PROPERTIES
 public Q_SLOTS: // METHODS
-    void quiet();
+    int add_qq_account(const QString &qqnumber, const QString &qqpassword);
+    void quit();
     SearchResult search(const QString &searchstring);
 Q_SIGNALS: // SIGNALS
     void account_added(const QString &account_type, const QString &account_name);
+    void account_removed(const QString &account_type, const QString &account_name);
     void account_status_changed(const QString &account_type, const QString &account_name, const QString &change_reason, const QString &account_name_);
+    void channel_added(const QString &channel_name);
+    void channel_removed(const QString &channel_name);
+    void on_message(const QString &channel_name, const QString &account_type, const QString &account_name, const QString &nick, const QString &message);
 };
 
 #endif
