@@ -59,6 +59,7 @@ enum errc_t
 
 	login_failed_blocked_account = 19,
 
+	login_failed_abnormal_account = 71,
 
 
 	login_check_need_vc = 1000,
@@ -94,7 +95,7 @@ enum errc_t
 
 	send_message_failed_too_often, // 等几秒再发
 
-	upload_offline_file_failed, 
+	upload_offline_file_failed,
 };
 
 /// Converts a value of type @c errc_t to a corresponding object of type

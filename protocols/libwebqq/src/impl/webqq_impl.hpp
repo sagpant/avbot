@@ -178,7 +178,8 @@ public:
 	std::string	m_version;
 	std::string m_clientid;
 	std::string m_psessionid;
-	std::string	m_vfwebqq;
+	std::string m_vfwebqq;
+	std::string pt_verifysession;
 	std::string m_myself_uin;
 	std::string m_login_sig; // 安全参数
 	long m_msg_id; // update on every message.

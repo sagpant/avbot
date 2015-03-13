@@ -52,7 +52,6 @@ Q_SIGNALS:
 public Q_SLOTS:
 
 	SearchResult search(QString searchstring);
-	int dsearch(QString searchstring);
 
 private:
 	std::function<void(

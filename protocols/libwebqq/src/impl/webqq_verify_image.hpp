@@ -69,6 +69,8 @@ public:
 
 		if (ec)
 			ec = error::fetch_verifycode_failed;
+
+		m_webqq->pt_verifysession = m_webqq->m_cookie_mgr.get_cookie("http://qq.com")["verifysession"];
 		m_handler(ec, vcimg);
 	}
 private:

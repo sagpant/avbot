@@ -48,20 +48,14 @@ DBusRPC::DBusRPC(boost::asio::io_service& io, on_message_signal_type & on_messag
 	qDBusRegisterMetaType<SearchResultData>();
 	qDBusRegisterMetaType<SearchResult>();
 
+	new AvbotAdaptor(this);
 	QDBusConnection::sessionBus().registerObject("/avbotrpc", this);
 	QDBusConnection::sessionBus().registerService("org.avplayer.avbot");
-	new AvbotAdaptor(this);
 
 	connect(this, SIGNAL(quit()), QCoreApplication::instance(), SLOT(quit()));
 }
 
 SearchResult DBusRPC::search(QString searchstring)
-{
-
-}
-
-
-int DBusRPC::dsearch(QString searchstring)
 {
 
 }
