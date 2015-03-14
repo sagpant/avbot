@@ -197,11 +197,13 @@ public:
 				{
 					if (ec == error::login_failed_wrong_vc)
 					{
-						if (m_webqq->m_sigbadvc)
+						try
 						{
 							m_webqq->logger.info() << "reporting bad vc";
 							m_webqq->m_sigbadvc();
 						}
+						catch(const std::bad_function_call&)
+						{}
 					}
 
 					// 查找问题， 报告问题啊！

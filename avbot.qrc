@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/avbot">
+        <file>avbot.svg</file>
+    </qresource>
+    <qresource prefix="js">
+        <file alias="encrypt.js">protocols/libwebqq/encrypt.js</file>
+    </qresource>
+</RCC>

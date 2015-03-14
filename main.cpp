@@ -34,7 +34,6 @@ namespace po = boost::program_options;
 #include <boost/algorithm/string.hpp>
 #include <boost/format.hpp>
 #include <boost/noncopyable.hpp>
-#include <boost/foreach.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/locale.hpp>
 #include <boost/signals2.hpp>
@@ -51,6 +50,8 @@ namespace po = boost::program_options;
 #ifdef HAVE_SYSTEMD
 #include <systemd/sd-daemon.h>
 #endif
+
+#include <QtCore>
 
 #include <soci-sqlite3.h>
 #include <boost-optional.h>
@@ -363,11 +364,14 @@ static void setup_initail_channels(fs::path run_root, avbot& mybot, soci::sessio
 	}
 }
 
+
 int main(int argc, char * argv[])
 {
 #ifdef _WIN32
 	::InitCommonControls();
 #endif
+	Q_INIT_RESOURCE(avbot);
+
 	boost::asio::io_service io_service;
 	boost::logger mylog;
 

@@ -19,90 +19,46 @@
 
 #pragma once
 
-#include <iostream>
-#include <boost/array.hpp>
-#include <boost/make_shared.hpp>
-#include <boost/foreach.hpp>
-#include <boost/function.hpp>
+#include <string>
+#include <memory>
+
+#include <functional>
+#include <boost/system/system_error.hpp>
 #include <boost/asio.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
-namespace js = boost::property_tree::json_parser;
-
-#include <boost/property_tree/json_parser.hpp>
-namespace pt = boost::property_tree;
-
-#include <boost/format.hpp>
+#include <boost/asio/coroutine.hpp>
 
 #include <avhttp.hpp>
-#include <avhttp/async_read_body.hpp>
-
-#include <boost/hash.hpp>
-
-#include "boost/timedcall.hpp"
-#include "boost/urlencode.hpp"
-#include "boost/stringencodings.hpp"
-
-#include "webqq_impl.hpp"
-#include "constant.hpp"
-#include "lwqq_status.hpp"
-#include "webqq_group_qqnumber.hpp"
 
 namespace webqq {
 namespace qqimpl {
+class WebQQ;
 namespace detail {
 
-/*
-u = function(uin, ptwebqq) {
-	for (var N = ptwebqq + "password error", T = "", V = [];;)
-		if (T.length <= N.length) {
-		T += uin;
-		if (T.length == N.length) break
-		}
-		else {
-			T = T.slice(0, N.length);
-			break
-		}
-		for (var U = 0; U < T.length; U++) V[U] = T.charCodeAt(U) ^ N.charCodeAt(U);
-		N = ["0", "1", "2", "3",
-			"4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"
-		];
-		T = "";
-		for (U = 0; U < V.length; U++) {
-			T += N[V[U] >> 4 & 15];
-			T += N[V[U] & 15]
-		}
-		return T
-}
-*/
-template<typename var>
-std::string hash_func_u(var uin, var ptwebqq)
+struct get_hash_file_op : boost::asio::coroutine
 {
-	var T;
-	std::vector<unsigned char> V;
-	var N = ptwebqq + "password error";
-	for (;;)
+	template<class Handler>
+	get_hash_file_op(std::shared_ptr<qqimpl::WebQQ> webqq, Handler handler)
+		: m_webqq(webqq), m_handler(handler)
 	{
-		if (T.length() <= N.length()) {
-			T += uin;
-			if (T.length() == N.length())
-				break;
-		}
-		else {
-			T = T.substr(0, N.length());
-			break;
-		}
 	}
 
-	V.resize(T.length());
+	void operator()(boost::system::error_code, std::size_t bytes_transfered = 0);
 
-	for (int U = 0; U < T.length(); U++)
-	{
-		V[U] = (unsigned)(T[U]) ^ (unsigned)(N[U]);
-	}
+private:
+	std::shared_ptr<qqimpl::WebQQ> m_webqq;
+	std::function<void(boost::system::error_code)> m_handler;
 
-	return avhttp::detail::to_hex(std::string((const char*)V.data(), V.size()));
+	std::shared_ptr<avhttp::http_stream> m_stream;
+	std::shared_ptr<boost::asio::streambuf> m_buffer;
+};
+
+template<class Handler>
+void  async_get_hash_file(std::shared_ptr<qqimpl::WebQQ> webqq, Handler handler)
+{
+	get_hash_file_op(webqq, handler)(boost::system::error_code());
 }
+
+std::string hash_func(std::string x, std::string K);
 
 } // namespace detail
 } // namespace qqimpl

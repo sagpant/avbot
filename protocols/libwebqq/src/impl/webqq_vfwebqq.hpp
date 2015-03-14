@@ -4,7 +4,7 @@
 #include <boost/function.hpp>
 #include <boost/asio.hpp>
 #include <boost/property_tree/json_parser.hpp>
-namespace js = boost::property_tree::json_parser;
+namespace json_parser = boost::property_tree::json_parser;
 #include <boost/asio/yield.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/shared_ptr.hpp>
@@ -33,10 +33,11 @@ public:
 		: m_webqq(webqq), m_handler(handler)
 	{
 		std::string url =  boost::str(
-			boost::format("http://s.web2.qq.com/api/getvfwebqq?ptwebqq=%s&clientid=%ld&psessionid=%s")
+			boost::format("http://s.web2.qq.com/api/getvfwebqq?ptwebqq=%s&clientid=%ld&psessionid=%s&t=%ld")
 			% m_webqq->m_cookie_mgr.get_cookie("http://s.web2.qq.com/api/getvfwebqq")["ptwebqq"]
 			% m_webqq->m_clientid
 			% m_webqq->m_psessionid
+			% std::time(0)
 		);
 
 		stream.reset( new avhttp::http_stream( m_webqq->get_ioservice() ) );
@@ -58,27 +59,32 @@ public:
 		pt::ptree json;
 		std::istream response( m_buffer.get() );
 
-		if (!ec){
-		//　登录步骤.
-		//处理!
-		try {
-			js::read_json( response, json );
+		if (!ec)
+		{
+			//　登录步骤.
+			//处理!
+			try
+			{
+				json_parser::read_json( response, json );
 
-			if( json.get<std::string>( "retcode" ) == "0" ) {
-				m_webqq->m_vfwebqq = json.get<std::string>( "result.vfwebqq" );
+				if( json.get<std::string>( "retcode" ) == "0" )
+				{
+					m_webqq->m_vfwebqq = json.get<std::string>( "result.vfwebqq" );
 
-				m_webqq->m_cookie_mgr.save_cookie("psession.qq.com", "/", "vfwebqq", m_webqq->m_vfwebqq, "session");
+					m_webqq->m_cookie_mgr.save_cookie("psession.qq.com", "/", "vfwebqq", m_webqq->m_vfwebqq, "session");
 
-				m_webqq->m_status = LWQQ_STATUS_ONLINE;
+					m_webqq->m_status = LWQQ_STATUS_ONLINE;
 
-				m_webqq->get_ioservice().post(
-					boost::asio::detail::bind_handler(m_handler,boost::system::error_code())
-				);
-				return;
+					m_webqq->get_ioservice().post(
+						boost::asio::detail::bind_handler(m_handler,boost::system::error_code())
+					);
+					return;
+				}
 			}
-		} catch( const pt::ptree_error & jserr ) {
-			m_webqq->logger.err() <<  __FILE__ << " : " <<__LINE__ << " :" << "parse bad path error : " <<  jserr.what();
-		}
+			catch(const pt::ptree_error & jserr)
+			{
+				m_webqq->logger.err() <<  __FILE__ << " : " <<__LINE__ << " :" << "parse bad path error : " <<  jserr.what();
+			}
 		}
 
 		m_handler(error::make_error_code(error::failed_to_change_status));

@@ -53,10 +53,8 @@ file(GLOB SRCS *.cpp *.h*)
 file(GLOB UIS *.ui)
 
 qt5_wrap_ui(UI_SRCS ${UIS})
-qt5_add_resources(RC_SRCS avbot.qrc)
 
-set(SRCS ${SRCS} ${UI_SRCS} ${RC_SRCS})
-
+set(SRCS ${SRCS} ${UI_SRCS})
 
 add_library(avbotgui STATIC ${SRCS})
 

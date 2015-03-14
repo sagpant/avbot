@@ -27,7 +27,7 @@
 #include <boost/asio.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
-namespace js = boost::property_tree::json_parser;
+namespace json_parser = boost::property_tree::json_parser;
 
 #include <boost/property_tree/json_parser.hpp>
 namespace pt = boost::property_tree;
@@ -56,16 +56,11 @@ namespace detail {
 template<class Handler>
 class update_buddy_list_op : boost::asio::coroutine
 {
-    static std::string hashP(std::string uin,std::string ptwebqq)
-	{
-		return hash_func_u(uin, ptwebqq);
-	}
-
 	std::string create_post_data(std::string vfwebqq)
 	{
 		std::string m = boost::str(
 			boost::format( "{\"hash\":\"%s\", \"vfwebqq\":\"%s\"}" )
-			% hashP(m_webqq->m_myself_uin,
+			% hash_func(m_webqq->m_myself_uin,
 				m_webqq->m_cookie_mgr.get_cookie(WEBQQ_S_HOST "/api/get_user_friends2")["ptwebqq"]
 			)
 			% vfwebqq
@@ -124,7 +119,7 @@ public:
  		bool errored = false;
 
 		try{
-			js::read_json(jsondata, jsonobj);
+			json_parser::read_json(jsondata, jsonobj);
 
 			if(jsonobj.get<int>("retcode") == 0)
 			{

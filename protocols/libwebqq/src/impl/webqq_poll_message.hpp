@@ -103,6 +103,7 @@ public:
 				ec =  boost::system::error_code();
 			}else if(retcode == 102)
 			{
+				return m_webqq->get_ioservice().post(std::bind<void>(m_handler, boost::system::error_code()));
 			}
 			else if(retcode == 121 || retcode == 120 || retcode == 100)
 			{

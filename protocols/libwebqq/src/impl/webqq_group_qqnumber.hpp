@@ -27,7 +27,7 @@
 #include <boost/asio.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
-namespace js = boost::property_tree::json_parser;
+namespace json_parser = boost::property_tree::json_parser;
 
 #include <boost/property_tree/json_parser.hpp>
 namespace pt = boost::property_tree;

@@ -273,7 +273,9 @@ endif()
 
 add_subdirectory(rpc)
 
-add_executable(avbot ${AVBOT_SOURCES})
+qt5_add_resources(RC_SRCS avbot.qrc)
+
+add_executable(avbot WIN32 ${AVBOT_SOURCES} ${RC_SRCS})
 
 target_link_libraries(avbot avbotrpc)
 

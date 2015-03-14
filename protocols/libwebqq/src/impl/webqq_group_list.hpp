@@ -27,7 +27,7 @@
 #include <boost/asio.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
-namespace js = boost::property_tree::json_parser;
+namespace json_parser = boost::property_tree::json_parser;
 
 #include <boost/property_tree/json_parser.hpp>
 namespace pt = boost::property_tree;
@@ -58,7 +58,7 @@ class update_group_list_op : boost::asio::coroutine
 {
 	static std::string create_post_data(std::string selfuin, std::string ptwebqq, std::string vfwebqq )
 	{
-		std::string qqhash = hash_func_u(selfuin, ptwebqq);
+		std::string qqhash = hash_func(selfuin, ptwebqq);
 		std::string m = boost::str(boost::format("{\"vfwebqq\":\"%s\", \"hash\":\"%s\"}") % vfwebqq % qqhash);
 		return std::string("r=") + avhttp::detail::escape_string(m);
 	}
@@ -104,7 +104,7 @@ public:
  		bool retry = false;
 
 		try{
-			js::read_json(jsondata, jsonobj);
+			json_parser::read_json(jsondata, jsonobj);
 
 			if(jsonobj.get<int>("retcode") == 0)
 			{

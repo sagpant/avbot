@@ -4,7 +4,7 @@
 #include <boost/function.hpp>
 #include <boost/asio.hpp>
 #include <boost/property_tree/json_parser.hpp>
-namespace js = boost::property_tree::json_parser;
+namespace json_parser = boost::property_tree::json_parser;
 #include <boost/asio/yield.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/shared_ptr.hpp>
@@ -92,7 +92,7 @@ public:
 		//　登录步骤.
 		//处理!
 		try {
-			js::read_json( response, json );
+			json_parser::read_json( response, json );
 
 			if( json.get<std::string>( "retcode" ) == "0" ) {
 				m_webqq->m_psessionid = json.get<std::string>( "result.psessionid" );

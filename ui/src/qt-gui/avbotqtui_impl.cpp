@@ -8,7 +8,7 @@
 #include "avbotqtui_impl.hpp"
 #include "vc_input_dialog.hpp"
 
-void load_qrc(){Q_INIT_RESOURCE(avbot);}
+void load_qrc(){}
 
 #ifdef _WIN32
 #include "resource.h"

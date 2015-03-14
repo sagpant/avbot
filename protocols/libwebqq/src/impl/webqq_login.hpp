@@ -25,7 +25,7 @@
 #include <boost/function.hpp>
 #include <boost/asio.hpp>
 #include <boost/property_tree/json_parser.hpp>
-namespace js = boost::property_tree::json_parser;
+namespace json_parser = boost::property_tree::json_parser;
 #include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
 
@@ -49,105 +49,18 @@ namespace js = boost::property_tree::json_parser;
 #include "webqq_buddy_info.hpp"
 #include "webqq_vfwebqq.hpp"
 
-#include "tea.hpp"
-
 namespace webqq {
 namespace qqimpl {
 namespace detail {
 
-inline std::string util_md5_digest_str(const std::string & data)
-{
-	boost::hashes::md5::digest_type md5sum ;
-	md5sum = boost::hashes::compute_digest<boost::hashes::md5>(data);
-	return md5sum.str();
-}
-
-inline std::string util_md5_digest_raw(const std::string & data)
-{
-	boost::hashes::md5::digest_type md5sum ;
-	md5sum = boost::hashes::compute_digest<boost::hashes::md5>(data);
-	return std::string(reinterpret_cast<const char*>(md5sum.c_array()), md5sum.static_size);
-}
-
-inline static std::string RSA_public_encrypt(RSA* rsa, const std::string& from)
-{
-    std::string result;
-    const int keysize = RSA_size(rsa);
-    std::vector<unsigned char> block(keysize);
-    const int chunksize = keysize  - RSA_PKCS1_PADDING_SIZE;
-    int inputlen = from.length();
-
-    for(int i = 0 ; i < inputlen; i+= chunksize)
-    {
-        auto resultsize = RSA_public_encrypt(std::min(chunksize, inputlen - i), (uint8_t*) &from[i],  &block[0], (RSA*) rsa, RSA_PKCS1_PADDING);
-        result.append((char*)block.data(), resultsize);
-    }
-    return result;
-}
-
-
-/**
- * @brief 成加密用的 RSA 公钥
- *
- * @return RSA*
- */
-inline static std::shared_ptr<RSA> new_tecent_RSA_pubkey()
-{
-	// 生成加密用的 RSA 公钥
-	RSA* rsa = RSA_new();
-
-	BIGNUM* rsa_n = BN_new();
-	BIGNUM* rsa_e = BN_new();
-
-	BN_hex2bn(&rsa_n, "F20CE00BAE5361F8FA3AE9CEFA495362FF7DA1BA628F64A347F0A8C012BF0B254A30CD92ABFFE7A6EE0DC424CB6166F8819EFA5BCCB20EDFB4AD02E412CCF579B1CA711D55B8B0B3AEB60153D5E0693A2A86F3167D7847A0CB8B00004716A9095D9BADC977CBB804DBDCBA6029A9710869A453F27DFDDF83C016D928B3CBF4C7");
-	BN_set_word(rsa_e, 3);
-
-	if (rsa->n)
-		BN_free(rsa->n);
-	rsa->n = rsa_n;
-	if (rsa->e)
-		BN_free(rsa->e);
-	rsa->e = rsa_e;
-
-	return std::shared_ptr<RSA>(rsa, RSA_free);
-}
-
-
-inline std::string uin_decode(const std::string &uin)
-{
-	int i;
-	int uin_byte_length;
-	char _uin[9] = {0};
-
-	/* Calculate the length of uin (it must be 8?) */
-	uin_byte_length = uin.length() / 4;
-
-	/**
-	 * Ok, parse uin from string format.
-	 * "\x00\x00\x00\x00\x54\xb3\x3c\x53" -> {0,0,0,0,54,b3,3c,53}
-	 */
-	for( i = 0; i < uin_byte_length ; i++ ) {
-		char u[5] = {0};
-		char tmp;
-		strncpy( u, & uin [  i * 4 + 2 ] , 2 );
-
-		errno = 0;
-		tmp = strtol( u, NULL, 16 );
-
-		if( errno ) {
-			return NULL;
-		}
-
-		_uin[i] = tmp;
-	}
-	return std::string(_uin, 8);
-}
 
 inline std::string generate_clientid()
 {
 	srand( time( NULL ) );
 	return boost::str( boost::format( "%d%d%d" ) % (rand() % 90 + 10) % (rand() % 90 + 10) % (rand() % 90 + 10) );
 }
+
+std::string webqq_password_encode(const std::string & pwd, const std::string & vc, const std::string & salt);
 
 // qq 登录办法-验证码登录
 template<class Handler>
@@ -166,7 +79,7 @@ public:
 								  "&u1=http%%3A%%2F%%2Fweb2.qq.com%%2Floginproxy.html%%3Flogin2qq%%3D1%%26webqq_type%%3D10"
 								  "&h=1&ptredirect=0&"
 								  "ptlang=2052&from_ui=1&daid=164&pttype=1&dumy=&fp=loginerroralert&"
-								  "action=0-7-26321&mibao_css=m_webqq&t=1&g=1"
+								  "action=0-7-26321&mibao_css=m_webqq&t=2&g=1"
 								  "&js_type=0&js_ver=10114"
 								  "&login_sig=%s"
 								  "&pt_uistyle=5"
@@ -204,7 +117,7 @@ public:
 		{
 			if( ( check_login( ec, bytes_transfered ) == 0 ) && ( m_webqq->m_status == LWQQ_STATUS_ONLINE ) )
 			{
-				m_webqq->logger.info() <<  "redirecting to " << m_next_url;
+				m_webqq->logger.dbg() <<  "redirecting to " << m_next_url;
 
 				// 再次　login
 				m_stream = std::make_shared<avhttp::http_stream>(boost::ref(m_webqq->get_ioservice()));
@@ -212,7 +125,6 @@ public:
 				m_stream->request_options(
 					avhttp::request_opts()
 					(avhttp::http_options::connection, "close")
-					(avhttp::http_options::referer, "https://ui.ptlogin2.qq.com/cgi-bin/login?daid=164&target=self&style=16&mibao_css=m_webqq&appid=501004106&enable_qlogin=0&no_verifyimg=1&s_url=http%3A%2F%2Fw.qq.com%2Floginproxy.html&f_url=loginerroralert&strong_login=1&login_state=10&t=20131024001")
 					(avhttp::http_options::accept, "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
 					(avhttp::http_options::user_agent, "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.32 Safari/537.36")
 				);
@@ -238,12 +150,12 @@ public:
 						(avhttp::http_options::user_agent, "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.32 Safari/537.36")
 					);
 
-					m_webqq->logger.info() <<  "redirected again to " <<  m_stream->location();
+					m_webqq->logger.dbg() <<  "redirected again to " <<  m_stream->location();
 					BOOST_ASIO_CORO_YIELD avhttp::async_read_body(*m_stream, m_stream->location(), *m_buffer, *this);
 					m_webqq->m_cookie_mgr.save_cookie(*m_stream);
 				}
 
-				m_webqq->logger.info() <<  "redirecting success!!";
+				m_webqq->logger.dbg() <<  "redirecting success!!";
 
 				if (m_webqq->m_clientid.empty())
 				{
@@ -252,11 +164,13 @@ public:
 						"psession.qq.com", "/", "clientid", m_webqq->m_clientid, "session"
 					);
 				}
-				//change status,  this is the last step for login
-				// 设定在线状态.
+
 
 				//  get vfwebqq
 				BOOST_ASIO_CORO_YIELD async_update_vfwebqq(m_webqq, std::bind<void>(*this, std::placeholders::_1, 0));
+
+				//change status,  this is the last step for login
+				// 设定在线状态.
 
 				m_webqq->logger.info() <<  "changing status...";
 
@@ -276,6 +190,12 @@ public:
 
 				m_webqq->logger.info() <<  "status => online";
 
+				// 然后获取 md.js 文件，寻找关键函数
+
+				m_webqq->logger.dbg() << "getting md.js";
+
+				BOOST_ASIO_CORO_YIELD async_get_hash_file(m_webqq, *this);
+
 				// 先是 刷新 buddy 列表
 				m_webqq->logger.info() <<  "fetching buddy list";
 				BOOST_ASIO_CORO_YIELD async_update_buddy_list(m_webqq, *this);
@@ -288,6 +208,7 @@ public:
 						boost::asio::detail::bind_handler(m_handler, ec)
 					);
 				}
+
 				//polling group list
 				i = 0;
 
@@ -333,98 +254,6 @@ public:
 	}
 
 private:
-	bool is_md5(std::string s)
-	{
-		if (s.length() != 32)
-			return false;
-		// check for non hex code
-		if (std::find_if_not(s.begin(), s.end(), boost::is_any_of("0123456789abcdefABCDEF")) != s.end())
-			return false;
-		return true;
-	}
-
-	std::string hexstring_to_bin(std::string md5string)
-	{
-		typedef boost::archive::iterators::transform_width<
-			boost::bin_from_hex<std::string::iterator>,
-			8, 4, uint8_t> bin_from_hex_iterator;
-
-		return std::string(bin_from_hex_iterator(md5string.begin()),
-			bin_from_hex_iterator(md5string.end()));
-	}
-
-	/**
-	* I hacked the javascript file named comm.js, which received from tencent
-	* server, and find that fuck tencent has changed encryption algorithm
-	* for password in webqq3 . The new algorithm is below(descripted with javascript):
-	* var M=C.p.value; // M is the qq password
-	* var I=hexchar2bin(md5(M)); // Make a md5 digest
-	* var H=md5(I+pt.uin); // Make md5 with I and uin(see below)
-	* var G=md5(H+C.verifycode.value.toUpperCase());
-	*
-	* @param pwd User's password
-	* @param vc Verify Code. e.g. "!M6C"
-	* @param salt A string like "\x00\x00\x00\x00\x54\xb3\x3c\x53", NB: it
-	*        must contain 8 hexadecimal number, in this example, it equaled
-	*        to "0x0,0x0,0x0,0x0,0x54,0xb3,0x3c,0x53"
-	*
-	* @return Encoded password
-	*/
-	std::string webqq_password_encode(const std::string & pwd, const std::string & vc, const std::string & salt)
-	{
-		std::string md5pwd = pwd;
-		if (!is_md5(pwd))
-		{
-			md5pwd = util_md5_digest_str(pwd);
-		}
-
-		auto h1 = hexstring_to_bin(md5pwd);
-		auto s2 = util_md5_digest_str(h1 + salt);
-
-
-		auto tx_pubkey = new_tecent_RSA_pubkey();
-
-		auto rsaH1 = RSA_public_encrypt(tx_pubkey.get(), h1);
-
-		std::string rsaH1Len, vcodeLen;
-		{
-			char _rsaH1Len[20] = {0};
-			std::snprintf(_rsaH1Len, sizeof _rsaH1Len, "%X", (unsigned int) rsaH1.length());
-			rsaH1Len = _rsaH1Len;
-			char _vcodeLen[20] = {0};
-			std::snprintf(_vcodeLen, sizeof _vcodeLen, "000%X", (unsigned int) vc.length());
-			vcodeLen = _vcodeLen;
-		}
-
-		while (rsaH1Len.length() < 4) {
-            rsaH1Len = "0" + rsaH1Len;
-        }
-
-        TEA tea(s2);
-
- 		auto hexVcode = tea.strToBytes(boost::to_upper_copy(vc));
-
-		auto saltPwd = tea.enAsBase64(rsaH1Len + rsaH1 + tea.strToBytes(salt) + vcodeLen + hexVcode);
-
-		std::string saltPwd_replaced;
-
-		std::transform(saltPwd.begin(), saltPwd.end(), std::back_inserter(saltPwd_replaced),[](const char c)
-		{
-			switch(c)
-			{
-				case '/':
-					return '-';
-				case '+':
-					return '*';
-				case '=':
-					return '_';
-				default:
-					return c;
-			}
-		});
-
-		return saltPwd_replaced;
-	}
 
 private:
 	int check_login(boost::system::error_code & ec, std::size_t bytes_transfered)
