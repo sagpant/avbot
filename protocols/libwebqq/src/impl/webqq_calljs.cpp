@@ -38,7 +38,7 @@ std::string webqq::qqimpl::call_js_helper_function_in_buffer(const char* js_cont
 	JS_SetOptions(jsctx.get(), JSOPTION_VAROBJFIX|JSOPTION_COMPILE_N_GO|JSOPTION_NO_SCRIPT_RVAL);
 
 #if JS_VERSION == 185
-	JSObject* global_object = JS_NewGlobalObject(jsctx.get(), &global_class);
+	JSObject* global_object = JS_NewCompartmentAndGlobalObject(jsctx.get(), &global_class, NULL);
 #else
 	JSObject* global_object = JS_NewGlobalObject(jsctx.get(), &global_class, NULL);
 #endif
