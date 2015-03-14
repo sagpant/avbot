@@ -4,8 +4,6 @@ project(libwebqq)
 find_package(PkgConfig)
 find_package(Boost 1.54 REQUIRED COMPONENTS system thread regex filesystem)
 
-find_package(Qt5Qml REQUIRED)
-
 pkg_check_modules(MOZJS24 mozjs-25)
 pkg_check_modules(MOZJS185 mozjs185)
 
@@ -36,7 +34,7 @@ add_library(webqq STATIC
 	${AVHTTP_IMPL_HEADERS}
 )
 
-target_link_libraries(webqq ${Boost_LIBRARIES} ${MOZJS_LIBS} ${SOCI_LIBRARY} Qt5::Core Qt5::Qml)
+target_link_libraries(webqq ${Boost_LIBRARIES} ${MOZJS_LIBS} ${SOCI_LIBRARY} Qt5::Core)
 INCLUDE (CheckLibraryExists)
 if(NOT WIN32)
 check_library_exists(rt clock_gettime "" HAVE_CLOCK_GETTIME)
