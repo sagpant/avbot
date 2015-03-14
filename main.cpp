@@ -90,6 +90,7 @@ extern "C" const char * avbot_version_build_time();
 extern pt::ptree parse_cfg(std::string filecontent);
 
 char * execpath;
+extern avlog logfile;
 avlog logfile;			// 用于记录日志文件.
 
 static std::string progname;

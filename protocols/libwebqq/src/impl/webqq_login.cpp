@@ -135,7 +135,7 @@ static bool is_md5(std::string s)
 */
 std::string webqq_password_encode(const std::string& pwd, const std::string& vc, const std::string& salt)
 {
-	return call_js_helper_function("qrc://js/encrypt.js", "encryption", { pwd, boost::replace_all_copy(salt, "\\", "-"), vc});
+	return call_js_helper_function("qrc:/js/encrypt.js", "encryption", { pwd, boost::replace_all_copy(salt, "\\", "-"), vc});
 
 	std::string md5pwd = pwd;
 	if (!is_md5(pwd))
