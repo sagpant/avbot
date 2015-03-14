@@ -45,9 +45,14 @@ option(ENABLE_LIBGCC_STATIC "link to static libgcc" OFF)
 option(WITH_ICONV "boost is build with iconv" ON)
 option(WITH_ICU "boost is build with icu " OFF)
 option(WITH_QT_GUI "a qt gui interface" OFF)
+option(NO_WEBQQ "disable webqq protocol" OFF)
 
 option(USE_INTERNAL_SOCI "use bundled soci lib" WIN32)
 option(INTERNAL_OPENSSL "use bundled openssl" WIN32)
+
+if(NO_WEBQQ)
+	add_definitions(-DNO_WEBQQ)
+endif()
 
 if(WITH_ICU)
 	link_libraries(icudata)

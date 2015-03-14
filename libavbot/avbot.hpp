@@ -18,7 +18,12 @@
 #include "avchannel.hpp"
 #include "avaccount.hpp"
 
+#ifndef NO_WEBQQ
 #include "libwebqq/webqq.hpp"
+#else
+namespace webqq{class webqq;}
+#endif
+
 #include "irc.hpp"
 #include "libxmpp/xmpp.hpp"
 #include "mx.hpp"
@@ -112,16 +117,19 @@ public:
 	void set_mail_account(std::string mailaddr, std::string password, std::string pop3server = "", std::string smtpserver = "");
 
 private:
+#ifndef NO_WEBQQ
 	void callback_on_qq_group_message(std::weak_ptr<webqq::webqq> qq_account, std::string group_code, std::string who, std::vector<webqq::qqMsg> msg, boost::asio::yield_context);
+#endif
 	void callback_on_irc_message(std::weak_ptr<irc::client>, irc::irc_msg pMsg);
 	void callback_on_xmpp_group_message(std::weak_ptr<xmpp>, std::string xmpproom, std::string who, std::string message);
 	void callback_on_mail(mailcontent mail, mx::pop3::call_to_continue_function call_to_contiune);
 	void callback_on_avim(std::string reciver, std::string sender, std::vector<avim_msg>);
 	void callback_on_std_account(std::weak_ptr<avaccount>, channel_identifier, const avbotmsg&);
 private:
+#ifndef NO_WEBQQ
 	void callback_on_qq_group_found(std::weak_ptr<webqq::webqq>, webqq::qqGroup_ptr);
 	void callback_on_qq_group_newbee(std::weak_ptr<webqq::webqq>, webqq::qqGroup_ptr, webqq::qqBuddy_ptr);
-
+#endif
 	void callback_on_xmpp_room_joined(std::weak_ptr<xmpp>, std::string);
 	void callback_on_irc_room_joined(std::weak_ptr<irc::client>, std::string);
 	void callback_on_avim_room_created(std::weak_ptr<avim>, std::string);

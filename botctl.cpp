@@ -36,7 +36,9 @@
 #include "libavbot/avbot.hpp"
 #include "libavbot/avchannel.hpp"
 
+#ifndef NO_WEBQQ
 #include "libwebqq/webqq.hpp"
+#endif
 
 #include "auto_welcome.hpp"
 #include "botctl.hpp"
@@ -62,6 +64,8 @@ static void write_vcode(const std::string & vc_img_data)
 }
 
 static std::function<void (std::string)> do_vc_code;
+
+#ifndef NO_WEBQQ
 
 static void handle_join_group(webqq::qqGroup_ptr group, bool needvc,
 	const std::string & vc_img_data, std::shared_ptr<webqq::webqq> qqclient,
@@ -149,6 +153,7 @@ static void handle_search_group(std::string groupqqnum, webqq::qqGroup_ptr group
 		msg_sender("没找到没找到!");
 	}
 }
+#endif
 
 struct mail_recoder
 {
@@ -211,8 +216,9 @@ void on_bot_command(channel_identifier cid, avbotmsg avmessage, send_avchannel_m
 {
 	boost::regex ex;
 	boost::smatch what;
+#ifndef NO_WEBQQ
 	webqq::qqGroup_ptr  group;
-
+#endif
 	std::string channelname = channel.name();
 
 	auto msg_sender = boost::bind(&avbot::send_broadcast_message, &mybot,
@@ -321,6 +327,8 @@ void on_bot_command(channel_identifier cid, avbotmsg avmessage, send_avchannel_m
 		question.on_handle_message(msg_sender);
 	}
 
+#ifndef NO_WEBQQ
+
 	ex.set_expression("^\\.qqbot qqnickmap +([\\d]+) +([^ ]+)");
 
 	if (boost::regex_search(message, what, ex))
@@ -343,7 +351,7 @@ void on_bot_command(channel_identifier cid, avbotmsg avmessage, send_avchannel_m
 		}
 
 	}
-
+#endif
 	if (!avmessage.sender.is_op)
 		return;
 

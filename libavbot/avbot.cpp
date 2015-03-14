@@ -14,6 +14,7 @@ namespace fs = boost::filesystem;
 #include "boost/stringencodings.hpp"
 #include "avbot.hpp"
 
+#ifndef NO_WEBQQ
 static std::string	preamble_formater(std::string preamble_qq_fmt, webqq::qqBuddy *buddy, std::string falbacknick, webqq::qqGroup * grpup = NULL )
 {
 	static webqq::qqBuddy _buddy("", "", "", 0, "");
@@ -57,6 +58,7 @@ static std::string	preamble_formater(std::string preamble_qq_fmt, webqq::qqBuddy
 	}
 	return preamble;
 }
+#endif
 
 static std::string	preamble_formater(std::string preamble_irc_fmt, irc::irc_msg pmsg )
 {
@@ -148,6 +150,7 @@ void avbot::callback_on_irc_message(std::weak_ptr<irc::client>, irc::irc_msg pMs
 	on_message(channdl_id, message);
 }
 
+#ifndef NO_WEBQQ
 void avbot::callback_on_qq_group_message(std::weak_ptr< webqq::webqq > qq_account, std::string group_code, std::string who, std::vector< webqq::qqMsg > msg, boost::asio::yield_context yield_context)
 {
 	channel_identifier channel_id;
@@ -264,6 +267,7 @@ void avbot::callback_on_qq_group_message(std::weak_ptr< webqq::webqq > qq_accoun
 
 	on_message(channel_id, message);
 }
+#endif
 
 void avbot::callback_on_xmpp_group_message(std::weak_ptr< xmpp >, std::string xmpproom, std::string who, std::string msg )
 {
@@ -341,6 +345,7 @@ void avbot::callback_on_std_account(std::weak_ptr<avaccount> std_account, channe
 	on_message(i,m);
 }
 
+#ifndef NO_WEBQQ
 void avbot::callback_on_qq_group_found(std::weak_ptr<webqq::webqq> qq_account, webqq::qqGroup_ptr group)
 {
 	channel_identifier channel_id;
@@ -380,6 +385,7 @@ void avbot::callback_on_qq_group_newbee(std::weak_ptr<webqq::webqq>, webqq::qqGr
 
 	on_message(channel_id, message);
 }
+#endif
 
 void avbot::callback_on_xmpp_room_joined(std::weak_ptr<xmpp> xmpp_account, std::string roomname)
 {
@@ -415,6 +421,7 @@ void avbot::callback_on_avim_room_created(std::weak_ptr<avim> avim_account, std:
 
 std::shared_ptr<webqq::webqq> avbot::add_qq_account(std::string qqnumber, std::string password, avbot::need_verify_image cb, bool no_persistent_db)
 {
+#ifndef NO_WEBQQ
 	auto qq_account = std::make_shared<webqq::webqq>(std::ref(get_io_service()), std::ref(logger), qqnumber, password, no_persistent_db);
 	qq_account->on_verify_code([this, qq_account, cb](std::string img)
 	{
@@ -434,10 +441,15 @@ std::shared_ptr<webqq::webqq> avbot::add_qq_account(std::string qqnumber, std::s
 
 	m_qq_accounts.push_back(qq_account);
 	return qq_account;
+#else
+	return std::shared_ptr<webqq::webqq>();
+#endif
+
 }
 
 void avbot::feed_login_verify_code(std::string vcode, std::function<void()> badvcreporter)
 {
+#ifndef NO_WEBQQ
 	// 检查需要验证码的 account
 	try{
 		auto qq_account = boost::any_cast<std::shared_ptr<webqq::webqq>>(m_I_need_vc);
@@ -445,6 +457,7 @@ void avbot::feed_login_verify_code(std::string vcode, std::function<void()> badv
 			qq_account->feed_vc(vcode, badvcreporter);
 	}catch(const boost::bad_any_cast&)
 	{}
+#endif
 }
 
 std::shared_ptr<irc::client> avbot::add_irc_account( std::string nick, std::string password, std::string server, bool use_ssl)
@@ -538,7 +551,7 @@ struct send_avbot_message_visitor : public boost::static_visitor<>
 		boost::system::error_code ec;
 		_yield_context(ec);
 	}
-
+#ifndef NO_WEBQQ
 	void operator()(std::shared_ptr<webqq::webqq>& qq) const
 	{
 		// 使用 qq 的模式发送消息
@@ -554,6 +567,7 @@ struct send_avbot_message_visitor : public boost::static_visitor<>
 			_bot.get_io_service().post(std::bind(_yield_context, ec));
 		}
 	}
+#endif
 
 	void operator()(std::shared_ptr<irc::client>& irc_account) const
 	{
