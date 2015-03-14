@@ -1,4 +1,4 @@
-
+﻿
 #include <QtDBus>
 #include <QtDBus/QDBusConnection>
 

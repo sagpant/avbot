@@ -1,4 +1,4 @@
-
+﻿
 #include "webqq_hash.hpp"
 #include "webqq_calljs.hpp"
 #include "webqq_impl.hpp"

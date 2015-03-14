@@ -1,4 +1,4 @@
-
+﻿
 #include <memory>
 #include <jsapi.h>
 #ifndef MOZJS_MAJOR_VERSION
