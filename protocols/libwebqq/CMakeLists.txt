@@ -4,7 +4,7 @@ project(libwebqq)
 find_package(PkgConfig)
 find_package(Boost 1.54 REQUIRED COMPONENTS system thread regex filesystem)
 
-pkg_check_modules(MOZJS24 mozjs-25)
+pkg_check_modules(MOZJS24 mozjs-24)
 pkg_check_modules(MOZJS185 mozjs185)
 
 if(MOZJS24_FOUND)
