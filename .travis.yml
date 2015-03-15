@@ -7,14 +7,23 @@ before_install:
   - sudo add-apt-repository -y ppa:smspillaz/cmake-master
   - sudo add-apt-repository -y ppa:chris-lea/protobuf
   - sudo add-apt-repository -y ppa:b-s-a/ppa
+  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+  - sudo add-apt-repository -y ppa:canonical-qt5-edgers/qt5-beta-proper
+  - sudo add-apt-repository -y ppa:ubuntu-sdk-team/ppa
   - sudo apt-get update
   - sudo apt-get -y purge cmake
   - sudo apt-get -y install -qq cmake
+  - sudo apt-get install -qq g++-4.8 gcc-4.8
   - sudo apt-get install -qq wget liblua5.1-dev libluajit-5.1-dev
-  - sudo apt-get install -qq libsqlite3-dev libsoci-sqlite3.2  libsoci3.2-dev
-  - sudo apt-get install -qq libprotobuf-dev protobuf-compiler
-  - sudo apt-get install -qq libgloox-dev  boost1.55
-  - sudo apt-get install -qq libmozjs185-dev
+  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.6 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.6
+  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 40 --slave /usr/bin/g++ g++ /usr/bin/g++-4.8
+  - sudo update-alternatives --config gcc
+  - sudo apt-get -y install -qq libsqlite3-dev libsoci-sqlite3.2  libsoci3.2-dev
+  - sudo apt-get -y install -qq libprotobuf-dev protobuf-compiler
+  - sudo apt-get -y install -qq libgloox-dev  boost1.55
+  - sudo apt-get -y install -qq libmozjs185-dev
+  - sudo apt-get -y install -qq libqt5opengl5-dev libqt5dbus5 qtbase5-dev  libqt5widgets5 qt5-default
+
   - wget http://jaist.dl.sourceforge.net/boost/boost_1_57_0.tar.bz2
   - tar -xf boost_1_57_0.tar.bz2
   - sudo rm -rf /usr/include/boost/phoenix/
@@ -34,17 +43,6 @@ script:
 notifications:
   recipients:
     - microcaicai@gmail.com
-    - jack.wgm@gmail.com
   email:
     on_success: change
-    on_failure: always
-
-
-addons:
-  coverity_scan:
-    project:
-      name: "avplayer/avbot"
-      description: "Build submitted via Travis CI"
-    notification_email: microcaicai@gmail.com
-    build_command:   "make -j2"
-    branch_pattern: coverity_scan
+    on_failure: change
