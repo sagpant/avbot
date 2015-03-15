@@ -18,19 +18,14 @@ before_install:
   - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 99 --slave /usr/bin/g++ g++ /usr/bin/g++-4.8
   - sudo apt-get -y install -qq libsqlite3-dev libsoci-sqlite3.2  libsoci3.2-dev
   - sudo apt-get -y install -qq libprotobuf-dev protobuf-compiler
-  - sudo apt-get -y install -qq libgloox-dev  boost1.55
+  - sudo apt-get -y install -qq libgloox-dev
   - sudo apt-get -y install -qq libmozjs185-dev
   - sudo apt-get -y install -qq libqt5opengl5-dev libqt5dbus5 qtbase5-dev  libqt5widgets5 qt5-default
-
+  - mkdir -pv build
   - wget http://jaist.dl.sourceforge.net/boost/boost_1_57_0.tar.bz2
   - tar -xf boost_1_57_0.tar.bz2
-  - sudo rm -rf /usr/include/boost/phoenix/
-  - sudo rm -rf /usr/include/boost/spirit/
-  - sudo cp -a boost_1_57_0/boost/phoenix /usr/include/boost/
-  - sudo cp -a boost_1_57_0/boost/spirit /usr/include/boost/
-  - mkdir -pv build
   - git submodule update --init
-  - sed 's/1\.57/1\.55/g' -i CMakeLists.txt
+  - cd boost_1_57_0 && ./bootstrap.sh && sudo ./b2 install --prefix=/usr link=static --with-date_time --with-filesystem --with-exception --with-locale --with-random --with-regex --with-program_options --with-system --with-thread --with-context --with-coroutine
 
 before_script:
   cd build && LDFLAGS="-lrt" cmake -DENABLE_LUA=on -DENABLE_PYTHON=on -DINTERNALGLOOX=OFF ..
