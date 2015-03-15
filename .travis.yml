@@ -15,9 +15,7 @@ before_install:
   - sudo apt-get -y install -qq cmake
   - sudo apt-get install -qq g++-4.8 gcc-4.8
   - sudo apt-get install -qq wget liblua5.1-dev libluajit-5.1-dev
-  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.6 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.6
-  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 40 --slave /usr/bin/g++ g++ /usr/bin/g++-4.8
-  - sudo update-alternatives --config gcc
+  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 99 --slave /usr/bin/g++ g++ /usr/bin/g++-4.8
   - sudo apt-get -y install -qq libsqlite3-dev libsoci-sqlite3.2  libsoci3.2-dev
   - sudo apt-get -y install -qq libprotobuf-dev protobuf-compiler
   - sudo apt-get -y install -qq libgloox-dev  boost1.55
