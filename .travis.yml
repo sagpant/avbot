@@ -25,7 +25,7 @@ before_install:
   - wget http://jaist.dl.sourceforge.net/boost/boost_1_57_0.tar.bz2
   - tar -xf boost_1_57_0.tar.bz2
   - git submodule update --init
-  - cd boost_1_57_0 && ./bootstrap.sh && sudo ./b2 install --prefix=/usr link=static --with-date_time --with-filesystem --with-exception --with-locale --with-random --with-regex --with-program_options --with-system --with-thread --with-context --with-coroutine
+  - cd boost_1_57_0 && ./bootstrap.sh && sudo ./b2 install --prefix=/usr link=static --with-date_time --with-filesystem --with-exception --with-locale --with-random --with-regex --with-program_options --with-system --with-thread --with-context --with-coroutine --with-timer
 
 before_script:
   cd build && LDFLAGS="-lrt" cmake -DENABLE_LUA=on -DENABLE_PYTHON=on -DINTERNALGLOOX=OFF ..
