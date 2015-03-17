@@ -35,13 +35,19 @@ std::string webqq::qqimpl::call_js_helper_function_in_buffer(const char* js_cont
 #endif
 	std::shared_ptr<JSContext> jsctx{ JS_NewContext(jsrt.get(), 16*1024) , JS_DestroyContext};
 
-	JS_SetOptions(jsctx.get(), JSOPTION_VAROBJFIX|JSOPTION_COMPILE_N_GO|JSOPTION_NO_SCRIPT_RVAL);
+	JS_SetOptions(jsctx.get(), JS_GetOptions(jsctx.get()) |JSOPTION_VAROBJFIX|JSOPTION_COMPILE_N_GO|JSOPTION_NO_SCRIPT_RVAL);
 
 #if JS_VERSION == 185
 	JSObject* global_object = JS_NewCompartmentAndGlobalObject(jsctx.get(), &global_class, NULL);
 #else
-	JSObject* global_object = JS_NewGlobalObject(jsctx.get(), &global_class, NULL);
+    JS::CompartmentOptions options;
+    options.setVersion(JSVERSION_LATEST);
+
+	JSObject* global_object = JS_NewGlobalObject(jsctx.get(), &global_class, NULL, options);
+    JSAutoCompartment ac(jsctx.get(), global_object);
 #endif
+    JS_SetGlobalObject(jsctx.get(), global_object);
+
 	JS_InitStandardClasses(jsctx.get(), global_object);
 
 #if JS_VERSION == 185
