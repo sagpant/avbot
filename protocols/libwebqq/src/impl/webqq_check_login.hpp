@@ -178,7 +178,7 @@ public:
 				if(type == "0")
 				{
 					m_webqq->m_cookie_mgr.save_cookie(*stream);
-					m_webqq->pt_verifysession = m_webqq->m_cookie_mgr.get_cookie("http://qq.com")["ptvfsession"];
+					m_webqq->pt_verifysession = stream->http_cookies()["ptvfsession"];
 					m_handler(boost::system::error_code(), vc);
 					return;
 				}
