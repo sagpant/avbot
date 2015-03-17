@@ -150,13 +150,6 @@ bool webqq::is_online()
 	return impl->m_status == LWQQ_STATUS_ONLINE;
 }
 
-static void async_fetch_cface_cb(const boost::system::error_code& ec, read_streamptr stream,
-	std::function<void(boost::system::error_code ec)> callback)
-{
-	// store result to cface_data
-	callback(ec);
-}
-
 void webqq::async_fetch_cface(boost::asio::io_service& io_service, const qqMsgCface& cface, boost::asio::streambuf& buf, std::function<void(boost::system::error_code ec)> callback)
 {
 	std::string url = boost::str(
@@ -174,7 +167,10 @@ void webqq::async_fetch_cface(boost::asio::io_service& io_service, const qqMsgCf
 		avhttp::request_opts()
 			(avhttp::http_options::cookie, cface.cookie)
 	);
-	avhttp::async_read_body(*stream, url, buf, std::bind(async_fetch_cface_cb, std::placeholders::_1, stream, callback));
+	avhttp::async_read_body(*stream, url, buf, [stream, callback](const boost::system::error_code& ec, std::size_t) -> void
+	{
+		callback(ec);
+	});
 }
 
 void webqq::async_fetch_cface(boost::asio::io_service& io, const qqMsgCface& cface, boost::asio::streambuf& buf, boost::asio::yield_context yield_context)
@@ -189,23 +185,16 @@ void webqq::async_fetch_cface(boost::asio::io_service& io, const qqMsgCface& cfa
 	return init.result.get();
 }
 
-
-static void async_cface_url_final_cb(const boost::system::error_code& ec,
-								read_streamptr stream, std::function<void(boost::system::error_code ec, std::string)> callback)
-{
-	callback(ec, stream->location());
-}
-
 void webqq::async_cface_url_final(boost::asio::io_service & io_service, const qqMsgCface & cface, std::function<void(boost::system::error_code ec, std::string)> callback)
 {
 	std::string url = boost::str(
-						boost::format( "http://web.qq.com/cgi-bin/get_group_pic?gid=%s&uin=%s&fid=%s&pic=%s&vfwebqq=%s" )
-						% cface.gid
-						% cface.uin
-						% cface.file_id
-						% avhttp::detail::escape_string(cface.name)
-						% cface.vfwebqq
-					);
+		boost::format( "http://web.qq.com/cgi-bin/get_group_pic?gid=%s&uin=%s&fid=%s&pic=%s&vfwebqq=%s" )
+		% cface.gid
+		% cface.uin
+		% cface.file_id
+		% avhttp::detail::escape_string(cface.name)
+		% cface.vfwebqq
+	);
 
 	read_streamptr stream;
 	stream.reset( new avhttp::http_stream( io_service ) );
@@ -215,7 +204,9 @@ void webqq::async_cface_url_final(boost::asio::io_service & io_service, const qq
 	);
 
 	stream->max_redirects(0);
-	stream->async_open(url, std::bind(async_cface_url_final_cb, std::placeholders::_1, stream, callback));
+	stream->async_open(url, [stream, callback](const boost::system::error_code& ec){
+		callback(ec, stream->location());
+	});
 }
 
 void webqq::search_group( std::string groupqqnum, std::string vfcode, webqq::search_group_handler handler )
