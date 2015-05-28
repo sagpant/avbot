@@ -438,7 +438,7 @@ int main(int argc, char * argv[])
 	fs::path run_root; // 运行时的根
 	fs::path account_settings;
 
-	unsigned rpcport;
+	unsigned rpcport = 6789;
 
 	avbot mybot(io_service, mylog);
 
@@ -647,7 +647,7 @@ int main(int argc, char * argv[])
 	}
 
 	// 遍历文件夹, 设置 channel
-	setup_initail_channels(run_root, mybot, avlogdb);
+	setup_initail_channels(".", mybot, avlogdb);
 
 	boost::asio::io_service::work work(io_service);
 
