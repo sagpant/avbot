@@ -47,7 +47,7 @@ public:
 	{
 		BOOST_ASSERT(vcimgid.length() > 8);
 		std::string url = boost::str(
-			boost::format( LWQQ_URL_VERIFY_IMG ) % APPID % m_webqq->m_qqnum
+			boost::format(LWQQ_URL_VERIFY_IMG) % APPID % m_webqq->m_qqnum % vcimgid
 		);
 
 		m_stream->request_options(

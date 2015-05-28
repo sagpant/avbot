@@ -56,7 +56,7 @@
 #define LWQQ_URL_LOGIN_HOST "https://ssl.ptlogin2.qq.com"
 #define LWQQ_URL_CHECK_HOST "https://ssl.ptlogin2.qq.com"
 #define LWQQ_URL_CHECK_LOGIN_SIG_HOST "https://ui.ptlogin2.qq.com/cgi-bin/login"
-#define LWQQ_URL_VERIFY_IMG "http://captcha.qq.com/getimage?aid=%s&uin=%s"
+#define LWQQ_URL_VERIFY_IMG "https://ssl.captcha.qq.com/getimage?aid=%s&uin=%s&cap_cd=%s"
 #define VCCHECKPATH "/check"
 #define APPID "501004106"
 #define LWQQ_URL_SET_STATUS "http://d.web2.qq.com/channel/login2"

@@ -143,7 +143,7 @@ public:
                     % VCCHECKPATH % m_webqq->m_qqnum % APPID
                     % m_webqq->m_login_sig
                     % "http%3A%2F%2Fw.qq.com%2Fproxy.html"
-					% drand48()
+					% rand()
 			);
 
 			m_webqq->m_cookie_mgr.get_cookie(url, *stream);
@@ -156,23 +156,26 @@ public:
 			*
 			* The http message body has two format:
 			*
-			* ptui_checkVC('1','9ed32e3f644d968809e8cbeaaf2cce42de62dfee12c14b74', '\x00\x00\x00\x00\x54\xb3\x3c\x53');
-			* ptui_checkVC('1','6kn6cK_Xz9skMLUNbxNq3RcG9uYR7-H2','\\x00\\x00\\x00\\x00\\x68\\xe9\\x0b\\x58');
-			* ptui_checkVC('0','!IJG', '\x00\x00\x00\x00\x54\xb3\x3c\x53');
+			* ptui_checkVC('1','9ed32e3f644d968809e8cbeaaf2cce42de62dfee12c14b74', '\x00\x00\x00\x00\x54\xb3\x3c\x53', 'ptvfsession');
+			* ptui_checkVC('1','6kn6cK_Xz9skMLUNbxNq3RcG9uYR7-H2','\\x00\\x00\\x00\\x00\\x68\\xe9\\x0b\\x58', 'ptvfsession');
+			* ptui_checkVC('0','!IJG', '\x00\x00\x00\x00\x54\xb3\x3c\x53', 'ptvfsession');
 			* The former means we need verify code image and the second
 			* parameter is vc_type.
 			* The later means we don't need the verify code image. The second
 			* parameter is the verify code. The vc_type is in the header
 			* "Set-Cookie".
 			*/
-			ex.set_expression("ptui_checkVC\\('([0-9])',[ ]?'([0-9a-zA-Z!]*)',[ ]?'([0-9a-zA-Z\\\\]*)'");
-			ex2.set_expression("ptui_checkVC\\('([0-9])','([_\\-0-9a-zA-Z!]*)','([0-9a-zA-Z\\\\]*)'");
+			ex.set_expression("ptui_checkVC\\('([0-9])',[ ]?'([0-9a-zA-Z!]*)',[ ]?'([0-9a-zA-Z\\\\]*)',[ ]?'([0-9a-zA-Z\\\\]*)'");
+			ex2.set_expression("ptui_checkVC\\('([0-9])','([_\\-0-9a-zA-Z!]*)','([0-9a-zA-Z\\\\]*)',[ ]?'([0-9a-zA-Z\\\\]*)'");
 
 			if (boost::regex_search(response, what, ex) || boost::regex_search(response, what, ex2))
 			{
 				std::string type = what[1];
 				std::string vc = what[2];
 				m_webqq->m_verifycode.uin = what[3];
+				std::string vfsession = what[4];
+				if (!vfsession.empty())
+					m_webqq->m_ptvfsession = vfsession;
 
 				/* We need get the ptvfsession from the header "Set-Cookie" */
 				if(type == "0")
