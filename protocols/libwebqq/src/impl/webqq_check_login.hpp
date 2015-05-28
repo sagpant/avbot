@@ -175,7 +175,7 @@ public:
 				m_webqq->m_verifycode.uin = what[3];
 				std::string vfsession = what[4];
 				if (!vfsession.empty())
-					m_webqq->m_ptvfsession = vfsession;
+					m_webqq->pt_verifysession = vfsession;
 
 				/* We need get the ptvfsession from the header "Set-Cookie" */
 				if(type == "0")
