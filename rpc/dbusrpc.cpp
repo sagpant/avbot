@@ -57,7 +57,8 @@ DBusRPC::DBusRPC(boost::asio::io_service& io, on_message_signal_type & on_messag
 
 SearchResult DBusRPC::search(QString searchstring)
 {
-
+	SearchResult ret;
+	return ret;
 }
 
 
