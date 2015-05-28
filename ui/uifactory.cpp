@@ -9,7 +9,7 @@
 
 static std::shared_ptr<avbotui> static_avbot_ui_instance;
 
-void ui_init(boost::asio::io_service& io_service, boost::logger& logger, int argc, char* argv[])
+void ui_init(boost::asio::io_service& io_service, boost::logger& logger, int& argc, char* argv[])
 {
 	// 好了, 根据需要返回
 #if defined(WITH_QT_GUI)

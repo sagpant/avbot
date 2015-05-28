@@ -115,9 +115,6 @@ void avbotqtui_impl::write_log(std::string l, std::string m)
 			else if (l == boost::LOGGER_ERR_STR)
 			{
 				m_tray->showMessage(QStringLiteral("错误"), QString::fromStdString(m), QSystemTrayIcon::Critical);
-			}else if (l == boost::LOGGER_INFO_STR)
-			{
-				m_tray->showMessage(QStringLiteral("info"), QString::fromStdString(m), QSystemTrayIcon::Information);
 			}
 		});
 	}

@@ -21,8 +21,6 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 namespace fs = boost::filesystem;
-#include <boost/program_options.hpp>
-namespace po = boost::program_options;
 #include <boost/make_shared.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/format.hpp>

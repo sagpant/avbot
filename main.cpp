@@ -28,8 +28,6 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 namespace fs = boost::filesystem;
-#include <boost/program_options.hpp>
-namespace po = boost::program_options;
 #include <boost/make_shared.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/format.hpp>
@@ -373,19 +371,68 @@ int main(int argc, char * argv[])
 #endif
 	Q_INIT_RESOURCE(avbot);
 
+#ifdef _WIN32
+	setlocale(LC_ALL, "zh");
+#else
+	setlocale(LC_ALL, "");
+#endif
+
 	boost::asio::io_service io_service;
 	boost::logger mylog;
 
-	ui_init(io_service, mylog, 1, argv);
+	ui_init(io_service, mylog, argc, argv);
 
-	std::string jsdati_username, jsdati_password;
-	std::string hydati_key;
-	std::string deathbycaptcha_username, deathbycaptcha_password;
+	QCoreApplication::setApplicationName("avbot");
+	QCoreApplication::setApplicationVersion(avbot_version());
+
+	QCommandLineParser cliparser;
+	cliparser.setApplicationDescription("avbot");
+
+	cliparser.addHelpOption();
+	cliparser.addVersionOption();
+	cliparser.addOption({"about-qt", "display about-qt dialog"});
+	cliparser.addOption({"about", "display about dialog"});
+
+	cliparser.addOption({"daemon,d", "go to background"});
+	cliparser.addOption({"no-daemon,D", "don\'t go to background"});
+	cliparser.addOption({"config,c", "path to account file", "/etc/avbot.conf"});
+	cliparser.addOption({"logdir,l", "log dir", "/run/avbot"});
+	cliparser.addOption({"nopersistent,s", "do not store cookies persistently to increase security."});
+
+	cliparser.addOption({"hydati_key", QStringLiteral("慧眼答题服务key"), "key"});
+
+	cliparser.addOptions({
+		{"jsdati_username", QStringLiteral("联众打码服务账户"), "username"},
+		{"jsdati_password", QStringLiteral("联众打码服务密码"), "password"}
+	});
+
+	cliparser.addOptions({
+			{"deathbycaptcha_username", QStringLiteral("阿三解码服务账户"), "username"},
+			{"deathbycaptcha_password", QStringLiteral("阿三解码服务密码"), "password"}
+	});
+
+	cliparser.addOptions({
+			{"antigate_key", QStringLiteral("antigate解码服务key"), "key"},
+			{"antigate_host", QStringLiteral("antigate解码服务器地址"), "url", "http://anti-captcha.com/"}
+	});
+
+	cliparser.addOption({"weblogbaseurl","base url for weblog serving", "url"});
+	cliparser.addOption({"rpcport", "run rpc server on this port", "6176"});
+
+	cliparser.addOption({"preambleqq", QStringLiteral("为QQ设置的发言前缀, 默认是 qq(%a): "), "qq(%a):"});
+	cliparser.addOption({"preambleirc", QStringLiteral("为IRC设置的发言前缀, 默认是  %a 说:"), " %a 说:"});
+	cliparser.addOption({"preamblexmpp", QStringLiteral("为XMPP设置的发言前缀, 默认是 (%a):"), "(%a):"});
+
+	cliparser.process(*QCoreApplication::instance());
+
 	//http://api.dbcapi.me/in.php
 	//http://antigate.com/in.php
 	std::string antigate_key, antigate_host;
-	bool use_avplayer_free_vercode_decoder(false);
-	bool no_persistent_db(false);
+	bool no_persistent_db = [&]() -> bool {
+		if(!cliparser.isSet("nopersistent"))
+			return false;
+		return cliparser.value("nopersistent")!= "no";
+	}();
 	std::string weblogbaseurl;
 
 	fs::path run_root; // 运行时的根
@@ -396,85 +443,6 @@ int main(int argc, char * argv[])
 	avbot mybot(io_service, mylog);
 
 	progname = fs::basename(argv[0]);
-
-#ifdef _WIN32
-	setlocale(LC_ALL, "zh");
-#else
-	setlocale(LC_ALL, "");
-#endif
-
-	po::variables_map vm;
-	po::options_description desc("qqbot options");
-	desc.add_options()
-	("version,v", 	"output version")
-	("help,h", 	"produce help message")
-	("daemon,d", 	"go to background")
-	("nostdin", 	"don't read from stdin (systemd daemon mode)")
-#if defined(WIN32) || defined(WITH_QT_GUI)
-	("gui,g",	 	"pop up settings dialog")
-#endif
-
-	("config,c", po::value<fs::path>(&account_settings)->default_value("/etc/avbot.conf"),
-		"path to account file")
-	("logdir,d", po::value<fs::path>(&run_root)->default_value("/run/avbot"),
-		"path to logs")
-	("nopersistent,s", po::value<bool>(&no_persistent_db),
-		"do not use persistent database file to increase security.")
-
-	("jsdati_username", po::value<std::string>(&jsdati_username),
-		literal_to_localstr("联众打码服务账户").c_str())
-	("jsdati_password", po::value<std::string>(&jsdati_password),
-		literal_to_localstr("联众打码服务密码").c_str())
-
-	("hydati_key", po::value<std::string>(&hydati_key),
-		literal_to_localstr("慧眼答题服务key").c_str())
-
-	("deathbycaptcha_username", po::value<std::string>(&deathbycaptcha_username),
-		literal_to_localstr("阿三解码服务账户").c_str())
-	("deathbycaptcha_password", po::value<std::string>(&deathbycaptcha_password),
-		literal_to_localstr("阿三解码服务密码").c_str())
-
-	("antigate_key", po::value<std::string>(&antigate_key),
-		literal_to_localstr("antigate解码服务key").c_str())
-	("antigate_host", po::value<std::string>(&antigate_host)->default_value("http://antigate.com/"),
-		literal_to_localstr("antigate解码服务器地址").c_str())
-
-	("use_avplayer_free_vercode_decoder", po::value<bool>(&use_avplayer_free_vercode_decoder),
-		"ask microcai for permission")
-
-	("weblogbaseurl", po::value<std::string>(&(weblogbaseurl)),
-		"base url for weblog serving")
-	("rpcport",	po::value<unsigned>(&rpcport)->default_value(6176),
-		"run rpc server on port 6176")
-
-	("preambleqq", po::value<std::string>(&preamble_qq_fmt)->default_value(literal_to_localstr("qq(%a): ")),
-		literal_to_localstr("为QQ设置的发言前缀, 默认是 qq(%a): ").c_str())
-	("preambleirc", po::value<std::string>(&preamble_irc_fmt)->default_value(literal_to_localstr("%a 说: ")),
-		literal_to_localstr("为IRC设置的发言前缀, 默认是 %a 说: ").c_str())
-	("preamblexmpp", po::value<std::string>(&preamble_xmpp_fmt)->default_value(literal_to_localstr("(%a): ")),
-		literal_to_localstr(
-			"为XMPP设置的发言前缀, 默认是 (%a): \n\n "
-			"前缀里的含义 \n"
-			"\t %a 为自动选择\n\t %q 为QQ号码\n\t %n 为昵称\n\t %c 为群名片 \n"
-			"\t %r为房间名(群号, XMPP房名, IRC频道名) \n"
-			"可以包含多个, 例如想记录QQ号码的可以使用 qq(%a, %q)说: \n"
-			"注意在shell下可能需要使用\\(来转义(\n配置文件无此问题 \n\n").c_str())
-	;
-
-	po::store(po::parse_command_line(argc, argv, desc), vm);
-	po::notify(vm);
-
-	if (vm.count("help"))
-	{
-		std::cerr <<  desc <<  std::endl;
-		return 1;
-	}
-
-	if (vm.count("version"))
-	{
-		printf("qqbot version %s (%s %s) \n", avbot_version() , __DATE__, __TIME__);
-		exit(EXIT_SUCCESS);
-	}
 
 #ifdef WIN32
 	// 从 windows 控制台输入的能有啥好编码，转到utf8吧.
@@ -488,7 +456,7 @@ int main(int argc, char * argv[])
 	setenv("TZ", "Asia/Shanghai", 1);
 # endif
 
-	if (vm.count("config") == 1 && account_settings == "/etc/avbot.conf")
+	if (!cliparser.isSet("config"))
 	{
 		// 查找合适的配置文件. 优先选择 当前目录, 然后是 $HOME/.avbot.conf 最后是 /etc/avbot.conf
 		// 都没有的话, 还是使用 avbot.conf
@@ -506,6 +474,10 @@ int main(int argc, char * argv[])
 		{
 			account_settings = fs::current_path() / "avbot.conf";
 		}
+	}
+	else
+	{
+		account_settings = cliparser.value("config").toStdString();
 	}
 
 	{
@@ -556,6 +528,11 @@ int main(int argc, char * argv[])
 			weblogbaseurl = globle_settings.get<std::string>("weblogbaseurl");
 	}
 
+	if (cliparser.isSet("antigate_key"))
+		antigate_key = cliparser.value("antigate_key").toStdString();
+	if (cliparser.isSet("antigate_host"))
+		antigate_host = cliparser.value("antigate_host").toStdString();
+
 	// 设置日志自动记录目录.
 	if (!run_root.empty())
 	{
@@ -573,29 +550,29 @@ int main(int argc, char * argv[])
 
 	decaptcha::deCAPTCHA decaptcha_agent(io_service);
 
-	if (!hydati_key.empty())
+	if (cliparser.isSet("hydati_key"))
 	{
 		decaptcha_agent.add_decoder(
 			decaptcha::decoder::hydati_decoder(
-				io_service, hydati_key
+				io_service, cliparser.value("hydati_key").toStdString()
 			)
 		);
 	}
 
-	if (!jsdati_username.empty() && !jsdati_password.empty())
+	if (cliparser.isSet("jsdati_username")  &&  cliparser.isSet("jsdati_password"))
 	{
 		decaptcha_agent.add_decoder(
 			decaptcha::decoder::jsdati_decoder(
-				io_service, jsdati_username, jsdati_password
+				io_service, cliparser.value("jsdati_username").toStdString(), cliparser.value("jsdati_password").toStdString()
 			)
 		);
 	}
 
-	if (!deathbycaptcha_username.empty() && !deathbycaptcha_password.empty())
+	if ( cliparser.isSet("deathbycaptcha_username")  && cliparser.isSet("deathbycaptcha_password"))
 	{
 		decaptcha_agent.add_decoder(
 			decaptcha::decoder::deathbycaptcha_decoder(
-				io_service, deathbycaptcha_username, deathbycaptcha_password
+				io_service, cliparser.value("deathbycaptcha_username").toStdString(), cliparser.value("deathbycaptcha_password").toStdString()
 			)
 		);
 	}
@@ -604,13 +581,6 @@ int main(int argc, char * argv[])
 	{
 		decaptcha_agent.add_decoder(
 			decaptcha::decoder::anticaptcha_decoder(io_service, antigate_key, antigate_host)
-		);
-	}
-
-	if (use_avplayer_free_vercode_decoder)
-	{
-		decaptcha_agent.add_decoder(
-			decaptcha::decoder::avplayer_free_decoder(io_service)
 		);
 	}
 

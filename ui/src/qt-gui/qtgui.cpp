@@ -6,10 +6,10 @@ avbotqtui::~avbotqtui()
 	delete impl;
 }
 
-avbotqtui::avbotqtui(boost::asio::io_service& io_service, boost::logger& logger, int argc, char* argv[])
+avbotqtui::avbotqtui(boost::asio::io_service& io_service, boost::logger& logger, int& argc, char* argv[])
 	: avbotui(io_service)
 {
-	app.reset(new QApplication(argc, argv));
+	app = new QApplication(argc, argv);
 	app->setQuitOnLastWindowClosed(false);
 	impl = new avbotqtui_impl(io_service, logger, argc, argv);
 }

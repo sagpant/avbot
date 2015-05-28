@@ -52,7 +52,7 @@ public:
 std::shared_ptr<avbotui> ui_get_instance();
 
 // UI 初始化失败会直接退出程序.
-void ui_init(boost::asio::io_service& io_service, boost::logger& logger, int argc, char* argv[]);
+void ui_init(boost::asio::io_service& io_service, boost::logger& logger, int& argc, char* argv[]);
 
 inline void report_fatal_error(std::string text)
 {

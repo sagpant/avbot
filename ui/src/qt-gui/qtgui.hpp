@@ -9,7 +9,7 @@ class avbotqtui_impl;
 class avbotqtui : public avbotui
 {
 public:
-	avbotqtui(boost::asio::io_service& io_service, boost::logger& logger, int argc, char* argv[]);
+	avbotqtui(boost::asio::io_service& io_service, boost::logger& logger, int& argc, char* argv[]);
 	~avbotqtui();
 
     virtual void run();
@@ -18,5 +18,5 @@ public:
     virtual void quit();
 
 	avbotqtui_impl* impl;
-	std::shared_ptr<QApplication> app;
+	QApplication* app;
 };

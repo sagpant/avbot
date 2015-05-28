@@ -6,7 +6,7 @@
 #include <boost/thread.hpp>
 #include <QCoreApplication>
 
-avbotcliui::avbotcliui(boost::asio::io_service& io_service, boost::logger& logger, int argc, char* argv[])
+avbotcliui::avbotcliui(boost::asio::io_service& io_service, boost::logger& logger, int& argc, char* argv[])
 	: avbotui(io_service)
 {
 	if (QCoreApplication::instance() == nullptr)

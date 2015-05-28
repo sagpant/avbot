@@ -115,7 +115,7 @@ set(REQUIRED_QT_VERSION 5.3.0)
 
 # find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Core DBus Widgets Network)
 find_package(Threads REQUIRED)
-find_package(Boost 1.57 REQUIRED COMPONENTS timer chrono date_time filesystem system program_options regex locale)
+find_package(Boost 1.57 REQUIRED COMPONENTS timer chrono date_time filesystem system regex locale)
 find_package(Qt5Core REQUIRED)
 
 find_package(Qt5DBus)
