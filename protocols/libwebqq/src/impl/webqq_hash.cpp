@@ -1,6 +1,5 @@
 ﻿
 #include "webqq_hash.hpp"
-#include "webqq_calljs.hpp"
 #include "webqq_impl.hpp"
 
 namespace{
@@ -11,9 +10,48 @@ namespace webqq {
 namespace qqimpl {
 namespace detail {
 
+	std::string hash_p(const char* x, const char* K)
+	{
+		char a[4] = { 0 };
+		int i;
+#ifdef WIN32
+		unsigned __int64 uin_n = _strtoui64(x, NULL, 10);
+#else
+		unsigned long long uin_n = strtoull(x, NULL, 10);
+#endif
+		for (i = 0; i < strlen(K); i++)
+			a[i % 4] ^= K[i];
+		char* j[] = { "EC", "OK" };
+		char d[4];
+		d[0] = (uin_n >> 24 & 255) ^ j[0][0];
+		d[1] = (uin_n >> 16 & 255) ^ j[0][1];
+		d[2] = (uin_n >> 8 & 255) ^ j[1][0];
+		d[3] = (uin_n & 255) ^ j[1][1];
+		char j2[8];
+		for (i = 0; i < 8; i++)
+			j2[i] = i % 2 == 0 ? a[i >> 1] : d[i >> 1];
+		char a2[] = "0123456789ABCDEF";
+		char d2[17] = { 0 };
+		for (i = 0; i < 8; i++) {
+			d2[i * 2] = a2[j2[i] >> 4 & 15];
+			d2[i * 2 + 1] = a2[j2[i] & 15];
+		}
+		return d2;
+	}
+
+	std::string hash_auto(std::string x, std::string K)
+	{
+		return hash_p(x.c_str(), K.c_str());
+	}
+
 std::string hash_func(std::string x, std::string K)
 {
-	return call_js_helper_function_in_buffer(hash_func_content.c_str(), hash_func_content.length(), "hash.js", "hash", { x, K});
+	if (hash_func_content == R"javascript(function hash(x,K)\n\{x+="";for(var N=[],T=0;T<K.length;T++)N[T%4]^=K.charCodeAt(T);var U=["EC","OK"],V=[];V[0]=x>>24&255^U[0].charCodeAt(0);V[1]=x>>16&255^U[0].charCodeAt(1);V[2]=x>>8&255^U[1].charCodeAt(0);V[3]=x&255^U[1].charCodeAt(1);
+U=[];for(T=0;T<8;T++)U[T]=T%2==0?N[T>>1]:V[T>>1];N=["0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F"];V="";for(T=0;T<U.length;T++){V+=N[U[T]>>4&15];V+=N[U[T]&15]}return V})javascript")
+	{
+		return hash_p(x.c_str(), K.c_str());
+	}
+	return hash_auto(x, K);
 }
 
 static void extract_hash_function(boost::system::error_code& ec, std::string);
