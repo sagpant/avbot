@@ -99,6 +99,6 @@ ptree parse_cfg(std::string filecontent)
 
 	qi::phrase_parse(first, last, cfg_grammar<Iterator>(), ascii::space, result);
 
-	boost::property_tree::json_parser::write_json(std::cout, result);
+	//boost::property_tree::json_parser::write_json(std::cout, result);
 	return result;
 }
