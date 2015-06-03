@@ -29,5 +29,7 @@ if(HAVE_CLOCK_GETTIME)
 endif(HAVE_CLOCK_GETTIME)
 endif()
 
+target_link_libraries(webqq ${OPENSSL_LIBRARIES})
+
 target_include_directories(webqq PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
