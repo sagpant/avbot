@@ -9,7 +9,6 @@
 
 #include <openssl/md5.h>
 #include <openssl/rsa.h>
-#include <openssl/engine.h>
 
 #include "webqq_login.hpp"
 
@@ -295,8 +294,8 @@ namespace detail {
 			} plain = { 0 };
 
 
-			plain.len_rsa_md5_pwd = 0x8000; // 128 
-			plain.len_captcha = 0x0400; //4 验证码长度 
+			plain.len_rsa_md5_pwd = 0x8000; // 128
+			plain.len_captcha = 0x0400; //4 验证码长度
 			memcpy(plain.captcha, captcha.c_str(), 4);
 
 			md5((unsigned char*)pwd.c_str(), pwd.length(), md5_pwd);
@@ -316,7 +315,7 @@ namespace detail {
 			std::transform(b64code, b64code + b64_sz, b64code, [](int ch) ->int { if (ch == '/') return '-'; else if (ch == '+') return '*'; else if (ch == '=') return '_'; else return ch; });
 
 			return b64code;
-		}	
+		}
 	}
 
 	std::string webqq_password_encode(const std::string& pwd, const std::string& vc, const std::string& salt)
