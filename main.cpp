@@ -390,38 +390,32 @@ int main(int argc, char * argv[])
 
 	cliparser.addHelpOption();
 	cliparser.addVersionOption();
-	cliparser.addOption({"about-qt", "display about-qt dialog"});
-	cliparser.addOption({"about", "display about dialog"});
+	cliparser.addOption(QCommandLineOption("about-qt", "display about-qt dialog"));
+	cliparser.addOption(QCommandLineOption("about", "display about dialog"));
 
-	cliparser.addOption({"daemon,d", "go to background"});
-	cliparser.addOption({"no-daemon,D", "don\'t go to background"});
-	cliparser.addOption({"config,c", "path to account file", "/etc/avbot.conf"});
-	cliparser.addOption({"logdir,l", "log dir", "/run/avbot"});
-	cliparser.addOption({"nopersistent,s", "do not store cookies persistently to increase security."});
+	cliparser.addOption(QCommandLineOption("daemon,d", "go to background"));
+	cliparser.addOption(QCommandLineOption( "no-daemon,D", "don\'t go to background"));
+	cliparser.addOption(QCommandLineOption("config,c", "path to account file", "/etc/avbot.conf"));
+	cliparser.addOption(QCommandLineOption("logdir,l", "log dir", "/run/avbot"));
+	cliparser.addOption(QCommandLineOption("nopersistent,s", "do not store cookies persistently to increase security."));
 
-	cliparser.addOption({"hydati_key", QStringLiteral("慧眼答题服务key"), "key"});
+	cliparser.addOption(QCommandLineOption("hydati_key", QStringLiteral("慧眼答题服务key"), "key"));
 
-	cliparser.addOptions({
-		{"jsdati_username", QStringLiteral("联众打码服务账户"), "username"},
-		{"jsdati_password", QStringLiteral("联众打码服务密码"), "password"}
-	});
+	cliparser.addOption(QCommandLineOption("jsdati_username", QStringLiteral("联众打码服务账户"), "username")); 
+	cliparser.addOption(QCommandLineOption("jsdati_password", QStringLiteral("联众打码服务密码"), "password"));
 
-	cliparser.addOptions({
-			{"deathbycaptcha_username", QStringLiteral("阿三解码服务账户"), "username"},
-			{"deathbycaptcha_password", QStringLiteral("阿三解码服务密码"), "password"}
-	});
+	cliparser.addOption(QCommandLineOption("deathbycaptcha_username", QStringLiteral("阿三解码服务账户"), "username"));
+	cliparser.addOption(QCommandLineOption("deathbycaptcha_password", QStringLiteral("阿三解码服务密码"), "password"));
 
-	cliparser.addOptions({
-			{"antigate_key", QStringLiteral("antigate解码服务key"), "key"},
-			{"antigate_host", QStringLiteral("antigate解码服务器地址"), "url", "http://anti-captcha.com/"}
-	});
+	cliparser.addOption(QCommandLineOption("antigate_key", QStringLiteral("antigate解码服务key"), "key"));
+	cliparser.addOption(QCommandLineOption("antigate_host", QStringLiteral("antigate解码服务器地址"), "url", "http://anti-captcha.com/"));
 
-	cliparser.addOption({"weblogbaseurl","base url for weblog serving", "url"});
-	cliparser.addOption({"rpcport", "run rpc server on this port", "6176"});
+	cliparser.addOption(QCommandLineOption("weblogbaseurl","base url for weblog serving", "url"));
+	cliparser.addOption(QCommandLineOption("rpcport", "run rpc server on this port", "6176"));
 
-	cliparser.addOption({"preambleqq", QStringLiteral("为QQ设置的发言前缀, 默认是 qq(%a): "), "qq(%a):"});
-	cliparser.addOption({"preambleirc", QStringLiteral("为IRC设置的发言前缀, 默认是  %a 说:"), " %a 说:"});
-	cliparser.addOption({"preamblexmpp", QStringLiteral("为XMPP设置的发言前缀, 默认是 (%a):"), "(%a):"});
+	cliparser.addOption(QCommandLineOption( "preambleqq", QStringLiteral("为QQ设置的发言前缀, 默认是 qq(%a): "), "qq(%a):"));
+	cliparser.addOption(QCommandLineOption("preambleirc", QStringLiteral("为IRC设置的发言前缀, 默认是  %a 说:"), QStringLiteral(" %a 说:")));
+	cliparser.addOption(QCommandLineOption("preamblexmpp", QStringLiteral("为XMPP设置的发言前缀, 默认是 (%a):"), "(%a):"));
 
 	cliparser.process(*QCoreApplication::instance());
 
