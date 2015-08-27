@@ -489,6 +489,7 @@ int main(int argc, char * argv[])
 	{
 		// 提示用户, 木有配置文件
 		report_fatal_error("木配置文件");
+		return 1;
 	}
 
 	// 解析 accounts 文件, 设置帐号
