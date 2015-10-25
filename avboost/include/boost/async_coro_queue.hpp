@@ -20,7 +20,7 @@ public:
 	timed_out_handler_wrapper(asio::io_service& io_service,
 		const asio::deadline_timer::duration_type& timedout,
 		RealHandler handler,
-		const boost::shared_ptr<bool> &timed_outed)
+		const boost::shared_ptr<bool>& timed_outed)
 		: m_io_service(io_service)
 		, m_timer(make_shared<boost::asio::deadline_timer>(boost::ref(io_service)))
 		, m_realhandler(make_shared<RealHandler>(handler))
@@ -54,7 +54,7 @@ public:
 		);
 	}
 
-	void operator()(boost::system::error_code ec, const T &t)
+	void operator()(boost::system::error_code ec, const T& t)
 	{
 		// forward to real hander
 		m_realhandler(ec, t);
@@ -104,7 +104,7 @@ private:
 
 public:
 	// 构造函数
-	async_coro_queue(boost::asio::io_service & io_service)
+	async_coro_queue(boost::asio::io_service& io_service)
 	  :m_io_service(io_service)
 	{
 	}
@@ -112,14 +112,14 @@ public:
 #ifdef  BOOST_NO_CXX11_VARIADIC_TEMPLATES
 	// 构造函数的一个重载，为列队传入额外的参数
 	template<typename T>
-	async_coro_queue(boost::asio::io_service & io_service, T t)
+	async_coro_queue(boost::asio::io_service& io_service, T t)
 	  :m_io_service(io_service), m_list(t)
 	{
 	}
 	// 利用 C++11 的 泛模板参数写第三个构造函数重载
 #else
 	template<typename ...T>
-	async_coro_queue(boost::asio::io_service & io_service, T&&... t)
+	async_coro_queue(boost::asio::io_service& io_service, T&&... t)
 	  : m_io_service(io_service), m_list(std::forward<T>(t)...)
 	{
 	}
@@ -300,7 +300,7 @@ public:
 	 * 向列队投递数据。
 	 * 如果列队为空，并且有协程正在休眠在 async_pop 上， 则立即唤醒此协程，并投递数据给此协程
      */
-	void push(const value_type &value)
+	void push(const value_type& value)
 	{
 		// 有handler 挂着！
 		if (!m_wait_handlers.empty())
@@ -308,7 +308,7 @@ public:
 			// 如果 m_list 不是空， 肯定是有严重的 bug
 			BOOST_ASSERT(m_list.empty());
 
-			BOOST_FOREACH(const async_wait_handler_type & h, m_wait_handlers)
+			BOOST_FOREACH(const async_wait_handler_type& h, m_wait_handlers)
 			{
 				m_io_service.post(
 					boost::asio::detail::bind_handler(
@@ -354,7 +354,7 @@ public:
 	{
 		if (!m_handlers.empty())
 		{
-			BOOST_FOREACH(const async_wait_handler_type & h, m_wait_handlers)
+			BOOST_FOREACH(const async_wait_handler_type& h, m_wait_handlers)
 			{
 				m_io_service.post(
 					boost::asio::detail::bind_handler(
@@ -397,7 +397,7 @@ public:
 
 private:
 
-	boost::asio::io_service & m_io_service;
+	boost::asio::io_service& m_io_service;
 	ListType m_list;
 	// 保存 async_pop 回调函数
 	std::queue<
